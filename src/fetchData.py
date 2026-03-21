@@ -97,7 +97,7 @@ class Data:
             return None, None
             
     '''
-    for an imaginary situation where 
+    for an imaginary situation with demo data where classes are assigned to professors
     '''        
     def readClassConstrains(self):
         '''
