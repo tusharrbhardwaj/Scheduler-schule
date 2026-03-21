@@ -29,6 +29,9 @@ r_capacity = data.readRooms()
 #groups : list && group_size : dictonary
 groups, group_size = data.readStudents()
 
+#classes : list with data in dictonary format
+classes = data.readClassConstrains()
+
 
 for grp,size in group_size.items():
     print(f"{grp} : {size}")
