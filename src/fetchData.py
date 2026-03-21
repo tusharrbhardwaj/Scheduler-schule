@@ -67,7 +67,7 @@ class Data:
                 groups : dictonary with group_id as key and its value as list of the students that are in the group
                 group_size : returns the group_id with its size for proper assignemnt of room and time.
         except:
-            
+            throws an error stating Error loading file std_grouping.json
         '''
         try:
             with open('./data/std_grouping.json') as group_data: 
@@ -96,6 +96,27 @@ class Data:
             
             return None, None
             
-             
-            
+    '''
+    for an imaginary situation where 
+    '''        
+    def readClassConstrains(self):
+        '''
+        readClassConstrains fetches data from ./data/constraints.js
+        try:
+            returns:
+                classes : list of classes with class_data in dictonary format
+        except:
+            throws an error stating Error loading file constraints.js
+        '''
+        try:
+            with open('./data/constraints.json') as class_constraints: 
+                classes_raw = json.load(class_constraints)
+                classes = [class_data for class_data in classes_raw["classes"]]
+                
+                return classes
+                       
         
+        except Exception as e:
+            print(f"Error loading file constraints.js: {e}")
+            
+            return None, None
