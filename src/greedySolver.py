@@ -36,8 +36,8 @@ classes = data.readClassConstrains()
 '''
 booked_rooms is a dictonary which will track the room and its time blockage.
 here ---
-key : room_id
-value : [timeslot, class_id]
+key : (timeslot,room_id)
+value : class_id
 '''
 booked_rooms = {}
 
@@ -50,17 +50,17 @@ timeslots = ["08:00", "11:00", "14:00", "17:00"]
 '''
 booked_prof is a dictonary which will track the prof and their time blockage.
 here ---
-key : prof_id
-value : [timeslot, class_id]
+key : (timeslot, prof_id)
+value : class_id
 '''
 booked_prof = {}
 
 '''
 unsceduled_classes for any edge case classes where it can not either be scheduled or need be scheduled somewhere else
 '''
+scheduled_classes = []
 unsceduled_classes = []
-eq=[]
-neq=[]
+
 class Greedy:
     
     def __init__(self):
@@ -82,15 +82,25 @@ class Greedy:
             assigned = False
             for timeslot in timeslots:
                 for r_id, capacity in r_capacity.items():
-                    if int(capacity) >= eachclass["students"] and (timeslot not in booked_rooms[r_id]):
-                        booked_rooms[r_id] = [eachclass[timeslot,'id']]
-                        assigned = True
-                        break
+                    if (capacity >= eachclass["students"]) and ((timeslot, r_id) not in booked_rooms):
+                        if (timeslot, eachclass["professor"]) not in booked_prof:
+                            booked_rooms[(timeslot, r_id)] = eachclass["id"]
+                            booked_prof[(timeslot, eachclass["professor"])] = eachclass["id"]
+                            scheduled_classes.append([eachclass["id"], timeslot, r_id, capacity - eachclass["students"]])
+                            assigned = True
+                            break
+                if assigned:
+                    break
         
             if not assigned:
                 unsceduled_classes.append(eachclass['id'])
                 
-        print(booked_rooms)    
+        for schedule in scheduled_classes:
+            print(f"Scheduled {schedule[0]} {schedule[1]} {schedule[2]} Wasted {schedule[3]} seats")    
+         
+        print("following are the unscheduled classes")   
+        for unschedule in unsceduled_classes:
+            print(unschedule)
             
     
                     
