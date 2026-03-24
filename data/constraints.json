@@ -1,0 +1,37 @@
+{
+  "classes": [
+    { "id": "C1", "students": 25, "professor": "P1" },
+    { "id": "C2", "students": 30, "professor": "P2" },
+    { "id": "C3", "students": 20, "professor": "P3" },
+    { "id": "C4", "students": 35, "professor": "P4" },
+    { "id": "C5", "students": 15, "professor": "P5" },
+    { "id": "C6", "students": 40, "professor": "P6" },
+    { "id": "C7", "students": 18, "professor": "P7" },
+    { "id": "C8", "students": 22, "professor": "P8" },
+    { "id": "C9", "students": 28, "professor": "P9" },
+    { "id": "C10", "students": 32, "professor": "P10" },
+
+    { "id": "C11", "students": 26, "professor": "P1" },
+    { "id": "C12", "students": 24, "professor": "P2" },
+    { "id": "C13", "students": 19, "professor": "P3" },
+    { "id": "C14", "students": 34, "professor": "P4" },
+    { "id": "C15", "students": 17, "professor": "P5" },
+    { "id": "C16", "students": 38, "professor": "P6" },
+    { "id": "C17", "students": 21, "professor": "P7" },
+    { "id": "C18", "students": 23, "professor": "P8" },
+    { "id": "C19", "students": 29, "professor": "P9" },
+    { "id": "C20", "students": 31, "professor": "P10" },
+
+    { "id": "C21", "students": 27, "professor": "P1" },
+    { "id": "C22", "students": 33, "professor": "P2" },
+    { "id": "C23", "students": 16, "professor": "P3" },
+    { "id": "C24", "students": 36, "professor": "P4" },
+    { "id": "C25", "students": 14, "professor": "P5" },
+    { "id": "C26", "students": 39, "professor": "P6" },
+    { "id": "C27", "students": 18, "professor": "P7" },
+    { "id": "C28", "students": 22, "professor": "P8" },
+    { "id": "C29", "students": 30, "professor": "P9" },
+    { "id": "C30", "students": 28, "professor": "P10" }
+  ]
+
+}
