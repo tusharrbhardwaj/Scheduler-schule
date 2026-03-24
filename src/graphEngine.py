@@ -14,6 +14,36 @@ there are two types of conflicts here except the room conflict which we tried to
 1. booking prof at same time 
 2. same student group assigned for two classes at same time
 '''
+
+
+'''
+---------------------------------------------------------------------------------------------
+Redundent code to skip main.py in development phase
+'''
+
+import fetchData
+
+data = fetchData.Data() #data object for class Data in .src/fetchData.py
+
+#p_ids : list & p_availablity : dictonary 
+p_ids, p_availablity = data.readProfJson()
+
+#r_capacity : list
+r_capacity = data.readRooms()
+
+#groups : list && group_size : dictonary
+groups, group_size = data.readStudents()
+
+#classes : list with data in dictonary format
+classes = data.readClassConstrains()
+
+'''
+---------------------------------------------------------------------------------------------
+'''
+
+
+
+
 graph = {
     
 }
