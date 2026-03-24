@@ -32,6 +32,9 @@ groups, group_size = data.readStudents()
 #classes : list with data in dictonary format
 classes = data.readClassConstrains()
 
+#Grouped_classes : list with data in dictonary fromat for student-group assigmnment to classes
+grouped_classes = data.classGroups() 
+
 
 for grp,size in group_size.items():
     print(f"{grp} : {size}")
