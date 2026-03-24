@@ -43,7 +43,14 @@ classes = data.readClassConstrains()
 
 
 
-
 graph = {
     
 }
+
+for eachclass in classes:
+    graph[eachclass['id']] = [smpf['id'] for smpf in classes if eachclass['professor'] == smpf['professor'] and (smpf['id'] != eachclass['id'])]
+    
+
+
+for key,value in graph.items():
+    print(f'{key} ---> {value}')
