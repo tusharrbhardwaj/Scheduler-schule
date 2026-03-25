@@ -120,7 +120,32 @@ class Data:
             print(f"Error loading file constraints.js: {e}")
             
             return None, None
+    '''
+    Since real-world enrollment data is not available, we simulate student group enrollments by defining a mapping between student groups and classes.
+    '''    
+    def classGroups(self):
+        '''
+        classGroup fetches data from ./data/class_group.json
+        try:
+            returns:
+                grouped_classes : list of classes with class_grouping data in dictonary format
+        except:
+            throws an error stating Error loading file class_group.json
+        '''
+        try:
+            with open('./data/class_group.json') as class_grp_division: 
+                class_group_data = json.load(class_grp_division)
+                grouped_calsses = {}
+                for eachgrp,eachclass in class_group_data["group_classes"].items():
+                    grouped_calsses[eachgrp] = eachclass
+                    
+                return grouped_calsses                      
+                       
         
+        except Exception as e:
+            print(f"Error loading file class_group.json: {e}")
+            
+            return None, None
     '''
     Timeslot.json containts timeslots that could be create of average 3 hours each
     '''    

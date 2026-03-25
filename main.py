@@ -32,8 +32,8 @@ groups, group_size = data.readStudents()
 #classes : list with data in dictonary format
 classes = data.readClassConstrains()
 
-# #Grouped_classes : list with data in dictonary fromat for student-group assigmnment to classes
-# grouped_classes = data.classGroups() 
+#Grouped_classes : list with data in dictonary fromat for student-group assigmnment to classes
+grouped_classes = data.classGroups() 
 
 #timneslots : returns dictonary with data in form of dictonary
 timeslots = data.readTimeslots()

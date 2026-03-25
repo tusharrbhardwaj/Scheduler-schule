@@ -32,6 +32,9 @@ classes = data.readClassConstrains()
 #Grouped_classes : list with data in dictonary fromat for student-group assigmnment to classes
 grouped_classes = data.classGroups() 
 
+#timneslots : returns dictonary with data in form of dictonary
+timeslots = data.readTimeslots()
+
 '''
 ---------------------------------------------------------------------------------------------
 '''
@@ -96,7 +99,10 @@ class graph_generator():
             
         return colored_graph
         
-
+    def timeslot_mapping(self):
+        colored_graph = self.coloring_graph()
+        for eachclass in colored_graph:
+            print(f"{eachclass} ---> {timeslots[f"T{colored_graph[eachclass]}"]}")
          
 
 graphing = graph_generator()
@@ -108,3 +114,5 @@ deg = graphing.coloring_graph()
 # for each in deg:
 #     print(each, "---->",deg[each])
 print(deg)
+
+graphing.timeslot_mapping()

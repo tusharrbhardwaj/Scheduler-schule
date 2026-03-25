@@ -37,6 +37,8 @@ groups, group_size = data.readStudents()
 #classes : list with data in dictonary format
 classes = data.readClassConstrains()
 
+#timneslots : returns dictonary with data in form of dictonary
+timeslots = data.readTimeslots()
 '''
 ---------------------------------------------------------------------------------------------
 '''
@@ -53,7 +55,7 @@ booked_rooms = {}
 timeslots containts time block, each of 3 hours now which starts from 08:00 in the morning to 20:00 in night.
 Henceforth 15:00 being last to be book time since the avergae duration of classes are 3 hours, booking at 15:00 would imply its end at 20:00 (end time of time-block)
 '''
-timeslots = ["08:00", "11:00", "14:00", "17:00"]
+# timeslots = ["08:00", "11:00", "14:00", "17:00"]
 
 '''
 booked_prof is a dictonary which will track the prof and their time blockage.
