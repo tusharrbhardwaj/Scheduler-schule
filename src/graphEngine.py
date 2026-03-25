@@ -47,15 +47,16 @@ there are two types of conflicts here except the room conflict which we tried to
 graph = {}
 
 for eachclass in classes:
+    #adding Prof conflict
     graph[eachclass['id']] = [smpf['id'] for smpf in classes if eachclass['professor'] == smpf['professor'] and (smpf['id'] != eachclass['id'])]
     
+    #adding group conflict
     for eachgroup in grouped_classes:
-        if eachclass['id'] in grouped_classes[eachgroup]:
-            conflict_group = grouped_classes[eachgroup]
-            lsclass = graph[eachclass['id']]
-            lsclass.extend(conflict_group)
-            break
-        
+        conflict_group = grouped_classes[eachgroup]
+        if eachclass['id'] in conflict_group:
+            for everygrp in conflict_group:
+                if everygrp not in graph[eachclass['id']] and everygrp != eachclass['id']:
+                    graph[eachclass['id']].append(everygrp)
     
 
 
