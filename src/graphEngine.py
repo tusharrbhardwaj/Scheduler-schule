@@ -9,14 +9,6 @@ Stage 2: Graph Theory (The "Collision" Engine)
 '''
 
 '''
-graph is a conflict-mapped graph in which classes act as node and their edges are conflcits with those classes
-there are two types of conflicts here except the room conflict which we tried to solve in ./src/greedySolver.py, 
-1. booking prof at same time 
-2. same student group assigned for two classes at same time
-'''
-
-
-'''
 ---------------------------------------------------------------------------------------------
 Redundent code to skip main.py in development phase
 '''
@@ -37,18 +29,33 @@ groups, group_size = data.readStudents()
 #classes : list with data in dictonary format
 classes = data.readClassConstrains()
 
+#Grouped_classes : list with data in dictonary fromat for student-group assigmnment to classes
+grouped_classes = data.classGroups() 
+
 '''
 ---------------------------------------------------------------------------------------------
 '''
 
+'''
+graph is a conflict-mapped graph in which classes act as node and their edges are conflcits with those classes
+there are two types of conflicts here except the room conflict which we tried to solve in ./src/greedySolver.py, 
+1. booking prof at same time 
+2. same student group assigned for two classes at same time
+'''
 
 
-graph = {
-    
-}
+graph = {}
 
 for eachclass in classes:
     graph[eachclass['id']] = [smpf['id'] for smpf in classes if eachclass['professor'] == smpf['professor'] and (smpf['id'] != eachclass['id'])]
+    
+    for eachgroup in grouped_classes:
+        if eachclass['id'] in grouped_classes[eachgroup]:
+            conflict_group = grouped_classes[eachgroup]
+            lsclass = graph[eachclass['id']]
+            lsclass.extend(conflict_group)
+            break
+        
     
 
 
