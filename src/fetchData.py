@@ -122,29 +122,26 @@ class Data:
             return None, None
         
     '''
-    Since real-world enrollment data is not available, we simulate student group enrollments by defining a mapping between student groups and classes.
+    Timeslot.json containts timeslots that could be create of average 3 hours each
     '''    
-    def classGroups(self):
+    def readTimeslots(self):
         '''
-        classGroup fetches data from ./data/class_group.json
+       readTimeslots fetches data from ./data/timeslot.json
         try:
             returns:
-                grouped_classes : list of classes with class_grouping data in dictonary format
+                timeslots : returns dictonary with data in form of dictonary
         except:
-            throws an error stating Error loading file class_group.json
+            throws an error stating Error loading file timeslot.json
         '''
         try:
-            with open('./data/class_group.json') as class_grp_division: 
-                class_group_data = json.load(class_grp_division)
-                grouped_calsses = {}
-                for eachgrp,eachclass in class_group_data["group_classes"].items():
-                    grouped_calsses[eachgrp] = eachclass
-                    
-                return grouped_calsses                      
+            with open('./data/timeslot.json') as alltimeslots:
+                timeslots = json.load(alltimeslots)
+
+                return timeslots                   
                        
         
         except Exception as e:
-            print(f"Error loading file class_group.json: {e}")
+            print(f"Error loading file timeslot.json: {e}")
             
             return None, None
         
