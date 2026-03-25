@@ -64,10 +64,47 @@ class graph_generator():
     
         return self.graph
     
-    def colored_graph(self):
-        pass
+    def sorted_graph(self):
+        degree =[]
+        for node in self.graph:
+            degree.append((node, len(self.graph[node])))
+            
+        degree.sort(key=lambda x:x[1],reverse=True)
+        sorted_nodes_graph = [each_calculated_node[0] for each_calculated_node in degree]
+        
+        return sorted_nodes_graph
+    
+    def coloring_graph(self):
+        sorted_nodes_graph = self.sorted_graph()
+        colored_graph = {}
+        
+       
+        for eachnode in sorted_nodes_graph:
+            color = 1
+            used_colors = set()
+            neighbors = self.graph[eachnode]
+            for eachneighbor in neighbors:
+                if eachneighbor in colored_graph:
+                    used_colors.add(colored_graph[eachneighbor])
+                
+            while color in used_colors:
+                color += 1
+            
+            colored_graph[eachnode] = color
+                
+                        
+            
+        return colored_graph
+        
+
+         
 
 graphing = graph_generator()
 finalgraph = graphing.conflict_graph()
-for key,value in finalgraph.items():
-    print(f'{key} ---> {value}')
+# for key,value in finalgraph.items():
+#     print(f'{key} ---> {value}')
+
+deg = graphing.coloring_graph()
+# for each in deg:
+#     print(each, "---->",deg[each])
+print(deg)
