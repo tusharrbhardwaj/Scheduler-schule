@@ -43,22 +43,31 @@ there are two types of conflicts here except the room conflict which we tried to
 2. same student group assigned for two classes at same time
 '''
 
-
-graph = {}
-
-for eachclass in classes:
-    #adding Prof conflict
-    graph[eachclass['id']] = [smpf['id'] for smpf in classes if eachclass['professor'] == smpf['professor'] and (smpf['id'] != eachclass['id'])]
+class graph_generator():
     
-    #adding group conflict
-    for eachgroup in grouped_classes:
-        conflict_group = grouped_classes[eachgroup]
-        if eachclass['id'] in conflict_group:
-            for everygrp in conflict_group:
-                if everygrp not in graph[eachclass['id']] and everygrp != eachclass['id']:
-                    graph[eachclass['id']].append(everygrp)
+    def __init__(self):
+        self.graph = {}
+
+    def conflict_graph(self):
+        for eachclass in classes:
+            #adding Prof conflict
+            self.graph[eachclass['id']] = [smpf['id'] for smpf in classes if eachclass['professor'] == smpf['professor'] and (smpf['id'] != eachclass['id'])]
+            
+            #adding group conflict
+            for eachgroup in grouped_classes:
+                conflict_group = grouped_classes[eachgroup]
+                if eachclass['id'] in conflict_group:
+                    for everygrp in conflict_group:
+                        if everygrp not in self.graph[eachclass['id']] and everygrp != eachclass['id']:
+                            self.graph[eachclass['id']].append(everygrp)
+        
     
+        return self.graph
+    
+    def colored_graph(self):
+        pass
 
-
-for key,value in graph.items():
+graphing = graph_generator()
+finalgraph = graphing.conflict_graph()
+for key,value in finalgraph.items():
     print(f'{key} ---> {value}')
