@@ -80,10 +80,10 @@ class graph_generator():
     def coloring_graph(self):
         sorted_nodes_graph = self.sorted_graph()
         colored_graph = {}
-        
+        timeslot_list = ["T1","T2","T3","T4","T5","T6","T7","T8","T9","T10","T11","T12","T13","T14","T15","T16","T17","T18","T19","T20"]
        
         for eachnode in sorted_nodes_graph:
-            color = 1
+            color = 0
             used_colors = set()
             neighbors = self.graph[eachnode]
             for eachneighbor in neighbors:
@@ -101,8 +101,31 @@ class graph_generator():
         
     def timeslot_mapping(self):
         colored_graph = self.coloring_graph()
+
+        # Get timeslot keys like ["T1", "T2", ...]
+        timeslot_keys = list(timeslots.keys())
+
         for eachclass in colored_graph:
-            print(f"{eachclass} ---> {timeslots[f"T{colored_graph[eachclass]}"]}")
+            color_index = colored_graph[eachclass]
+
+            if color_index >= len(timeslot_keys):
+                print(f"{eachclass} ---> No available timeslot")
+                continue
+
+            slot_key = timeslot_keys[color_index]
+            print(f"{eachclass} ---> {timeslots[slot_key]}")
+            
+    def validate_schedule(self):
+        colored_graph = self.coloring_graph()
+
+        for node in self.graph:
+            conflict = False
+            for neighbor in self.graph[node]:
+                if colored_graph[node] == colored_graph[neighbor]:
+                    print(f"Conflict: {node} and {neighbor} share same slot")
+                    conflict = True
+        if not conflict:   
+            print("Schedule Validated successfully")
          
 
 graphing = graph_generator()
@@ -116,3 +139,4 @@ deg = graphing.coloring_graph()
 print(deg)
 
 graphing.timeslot_mapping()
+graphing.validate_schedule()
