@@ -43,9 +43,9 @@ Scheduler-schulea/
       │── std_grouping.json
       │── timeslot.json
       
+```
 
-
-## ▶️ Installation & Setup
+## Installation & Setup
 
 1. Clone the repository:
 ```bash
