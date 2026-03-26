@@ -1,142 +1,222 @@
-# This is graph engine which maps conflicts at classes which can not go together
-'''
-Stage 2: Graph Theory (The "Collision" Engine)
-•	The Mission: Prevent scheduling conflicts before they occur.
-•	The Logic: Construct a conflict graph where each node represents a class. Two nodes are connected if the classes share at least one student group or the same professor. Using this graph, apply a graph coloring algorithm (such as Welsh–Powell) to assign time slots so that no connected classes are scheduled at the same time.
-•	The Report: Compare your greedy result from Stage 1 to your graph coloring result. Did graph coloring prevent more conflicts? Why?
-•	The Result: A structured map of "safe" vs. "unsafe" time slots.
+"""
+Graph Engine for Timetable Scheduling (Stage 2: Graph Theory)
 
-'''
+This module builds a conflict graph between classes and applies a graph
+coloring algorithm (Welsh–Powell heuristic) to assign time slots such that
+no conflicting classes occur at the same time.
 
-'''
----------------------------------------------------------------------------------------------
-Redundent code to skip main.py in development phase
-'''
+Conflicts are defined as:
+1. Same professor assigned to multiple classes
+2. Same student group assigned to multiple classes
+
+Outcome:
+- Conflict-free timetable
+- Efficient use of minimum time slots
+"""
 
 import fetchData
 
-data = fetchData.Data() #data object for class Data in .src/fetchData.py
+# ------------------------------------------------------------
+# Data Loading Section
+# ------------------------------------------------------------
 
-#p_ids : list & p_availablity : dictonary 
+data = fetchData.Data()
+
+# Professor data
 p_ids, p_availablity = data.readProfJson()
 
-#r_capacity : list
+# Room capacity data (not used in this stage)
 r_capacity = data.readRooms()
 
-#groups : list && group_size : dictonary
+# Student group data
 groups, group_size = data.readStudents()
 
-#classes : list with data in dictonary format
+# Class constraints (contains class ID, professor, etc.)
 classes = data.readClassConstrains()
 
-#Grouped_classes : list with data in dictonary fromat for student-group assigmnment to classes
-grouped_classes = data.classGroups() 
+# Mapping of student groups to classes
+grouped_classes = data.classGroups()
 
-#timneslots : returns dictonary with data in form of dictonary
+# Available time slots (dictionary: T1 → {day, start, end})
 timeslots = data.readTimeslots()
 
-'''
----------------------------------------------------------------------------------------------
-'''
 
-'''
-graph is a conflict-mapped graph in which classes act as node and their edges are conflcits with those classes
-there are two types of conflicts here except the room conflict which we tried to solve in ./src/greedySolver.py, 
-1. booking prof at same time 
-2. same student group assigned for two classes at same time
-'''
+# ------------------------------------------------------------
+# Graph Generator Class
+# ------------------------------------------------------------
 
 class graph_generator():
+    """
+    Generates a conflict graph and applies graph coloring
+    to assign time slots to classes.
+
+    Attributes:
+        graph (dict): Adjacency list representing conflicts
+    """
     
     def __init__(self):
+        """Initialize an empty graph."""
         self.graph = {}
 
     def conflict_graph(self):
+        """
+        Builds the conflict graph.
+
+        Each node = class
+        Edge exists if:
+        - Same professor
+        - Same student group
+
+        Returns:
+            dict: Graph with class IDs as keys and list of conflicting class IDs as values
+        """
         for eachclass in classes:
-            #adding Prof conflict
-            self.graph[eachclass['id']] = [smpf['id'] for smpf in classes if eachclass['professor'] == smpf['professor'] and (smpf['id'] != eachclass['id'])]
             
-            #adding group conflict
+            # Initialize adjacency list for each class
+            self.graph[eachclass['id']] = []
+
+            # ------------------------------------------------
+            # 1. Professor Conflict
+            # ------------------------------------------------
+            for smpf in classes:
+                if (
+                    eachclass['professor'] == smpf['professor']
+                    and smpf['id'] != eachclass['id']
+                ):
+                    self.graph[eachclass['id']].append(smpf['id'])
+
+            # ------------------------------------------------
+            # 2. Student Group Conflict
+            # ------------------------------------------------
             for eachgroup in grouped_classes:
                 conflict_group = grouped_classes[eachgroup]
+
                 if eachclass['id'] in conflict_group:
                     for everygrp in conflict_group:
-                        if everygrp not in self.graph[eachclass['id']] and everygrp != eachclass['id']:
+                        if (
+                            everygrp != eachclass['id']
+                            and everygrp not in self.graph[eachclass['id']]
+                        ):
                             self.graph[eachclass['id']].append(everygrp)
-        
-    
+
         return self.graph
-    
+
     def sorted_graph(self):
-        degree =[]
+        """
+        Sort nodes based on degree (number of conflicts).
+
+        This follows Welsh–Powell strategy:
+        Nodes with higher conflicts are colored first.
+
+        Returns:
+            list: Class IDs sorted by descending degree
+        """
+        degree = []
+
         for node in self.graph:
             degree.append((node, len(self.graph[node])))
-            
-        degree.sort(key=lambda x:x[1],reverse=True)
-        sorted_nodes_graph = [each_calculated_node[0] for each_calculated_node in degree]
-        
+
+        # Sort by highest degree first
+        degree.sort(key=lambda x: x[1], reverse=True)
+
+        # Extract only node names
+        sorted_nodes_graph = [node for node, _ in degree]
+
         return sorted_nodes_graph
-    
+
     def coloring_graph(self):
+        """
+        Apply greedy graph coloring (Welsh–Powell heuristic).
+
+        Assigns the smallest possible color (time slot index)
+        such that no adjacent nodes share the same color.
+
+        Returns:
+            dict: Mapping of class ID → color index
+        """
         sorted_nodes_graph = self.sorted_graph()
         colored_graph = {}
-        timeslot_list = ["T1","T2","T3","T4","T5","T6","T7","T8","T9","T10","T11","T12","T13","T14","T15","T16","T17","T18","T19","T20"]
-       
+
         for eachnode in sorted_nodes_graph:
             color = 0
             used_colors = set()
+
+            # Collect colors used by neighbors
             neighbors = self.graph[eachnode]
             for eachneighbor in neighbors:
                 if eachneighbor in colored_graph:
                     used_colors.add(colored_graph[eachneighbor])
-                
+
+            # Assign smallest unused color
             while color in used_colors:
                 color += 1
-            
+
             colored_graph[eachnode] = color
-                
-                        
-            
+
         return colored_graph
-        
+
     def timeslot_mapping(self):
+        """
+        Maps assigned colors to actual time slots.
+
+        Converts color indices (0,1,2...) → timeslot keys (T1, T2, ...)
+
+        Prints:
+            Class → Assigned timeslot details
+        """
         colored_graph = self.coloring_graph()
 
-        # Get timeslot keys like ["T1", "T2", ...]
+        # Extract timeslot keys in order
         timeslot_keys = list(timeslots.keys())
 
         for eachclass in colored_graph:
             color_index = colored_graph[eachclass]
 
+            # Check if enough timeslots exist
             if color_index >= len(timeslot_keys):
                 print(f"{eachclass} ---> No available timeslot")
                 continue
 
+            # Map color → timeslot
             slot_key = timeslot_keys[color_index]
             print(f"{eachclass} ---> {timeslots[slot_key]}")
-            
+
     def validate_schedule(self):
+        """
+        Validates that no conflicting classes share the same timeslot.
+
+        Prints:
+            - Conflict details if found
+            - Success message if schedule is valid
+        """
         colored_graph = self.coloring_graph()
+        conflict_found = False
 
         for node in self.graph:
-            conflict = False
             for neighbor in self.graph[node]:
                 if colored_graph[node] == colored_graph[neighbor]:
                     print(f"Conflict: {node} and {neighbor} share same slot")
-                    conflict = True
-        if not conflict:   
+                    conflict_found = True
+
+        if not conflict_found:
             print("Schedule Validated successfully")
-         
+
+
+# ------------------------------------------------------------
+# Execution Section
+# ------------------------------------------------------------
 
 graphing = graph_generator()
+
+# Build conflict graph
 finalgraph = graphing.conflict_graph()
-# for key,value in finalgraph.items():
-#     print(f'{key} ---> {value}')
 
+# Generate coloring result
 deg = graphing.coloring_graph()
-# for each in deg:
-#     print(each, "---->",deg[each])
-print(deg)
+print("Colored Graph:", deg)
 
+print("\nTimeslot Mapping:\n")
 graphing.timeslot_mapping()
+
+print("\nValidation:\n")
 graphing.validate_schedule()
