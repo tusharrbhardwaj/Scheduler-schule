@@ -25,13 +25,25 @@ Creating schedules manually is time-consuming and error-prone. This system autom
 ---
 
 ## Project Structure
+```bash
 Scheduler-schulea/
-│── main.py
-│── scheduler.py
-│── timeslots.py
-│── utils/
-│── data/
-│── README.md
+  │── main.py
+  │── README.md
+  │── src/
+      │── fetchData.py
+      │── greedySolver.py
+      │── graphEngine.py
+      │── backtracker.py
+      │── optimizer.py
+  │── data/
+      │── class_group.json
+      │── constraint.json
+      │── prof_availablity.json
+      │── rooms.json
+      │── std_grouping.json
+      │── timeslot.json
+      
+
 
 ## ▶️ Installation & Setup
 
