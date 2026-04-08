@@ -16,6 +16,7 @@ class Insert:
         self.table_name = table_name
         self.data = []
         self.columns = []
+        self.serialvariable = ''
         
     
     def visiting_table(self):
@@ -29,8 +30,7 @@ class Insert:
         
         
     
-    def read_csv(self):
-        
+    def read_csv(self):  
         try:
             with open(f"dataInput/{self.table_name}.csv") as filedata:
                 reader = csv.reader(filedata)
@@ -43,7 +43,6 @@ class Insert:
 
      
     def insert_data(self):
-        self.columns.pop(0)
         column_str = ', '.join(self.columns)
         place_holders = ', '.join(['%s'] * len(self.columns))
         formated_data = [tuple(row) for row in self.data]
@@ -51,7 +50,7 @@ class Insert:
         query = f"INSERT INTO {self.table_name} ({column_str}) VALUES ({place_holders})"
         try:
             cur.executemany(query, formated_data)
-            print("Data Inserted Successfully")
+            print("Data Inserted Successfully") 
             conn.commit()
         except Exception as e:
             conn.rollback()
