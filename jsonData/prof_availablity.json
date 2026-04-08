@@ -1,0 +1,79 @@
+{
+  "professors": [
+    {
+      "id": "P1",
+      "availability": {
+        "Monday":    { "from": "09:00", "to": "13:00" },
+        "Tuesday":   { "from": "10:00", "to": "14:00" },
+        "Wednesday": { "from": "08:00", "to": "12:00" }
+      }
+    },
+    {
+      "id": "P2",
+      "availability": {
+        "Monday":    { "from": "10:00", "to": "15:00" },
+        "Thursday":  { "from": "09:00", "to": "13:00" }
+      }
+    },
+    {
+      "id": "P3",
+      "availability": {
+        "Tuesday":   { "from": "09:00", "to": "12:00" },
+        "Wednesday": { "from": "10:00", "to": "13:00" },
+        "Friday":    { "from": "08:00", "to": "11:00" }
+      }
+    },
+    {
+      "id": "P4",
+      "availability": {
+        "Monday":    { "from": "11:00", "to": "16:00" },
+        "Wednesday": { "from": "12:00", "to": "16:00" },
+        "Friday":    { "from": "10:00", "to": "15:00" }
+      }
+    },
+    {
+      "id": "P5",
+      "availability": {
+        "Tuesday":   { "from": "08:00", "to": "12:00" },
+        "Thursday":  { "from": "09:00", "to": "13:00" }
+      }
+    },
+    {
+      "id": "P6",
+      "availability": {
+        "Monday":    { "from": "09:00", "to": "14:00" },
+        "Tuesday":   { "from": "10:00", "to": "15:00" },
+        "Friday":    { "from": "09:00", "to": "13:00" }
+      }
+    },
+    {
+      "id": "P7",
+      "availability": {
+        "Wednesday": { "from": "10:00", "to": "15:00" },
+        "Thursday":  { "from": "11:00", "to": "16:00" }
+      }
+    },
+    {
+      "id": "P8",
+      "availability": {
+        "Monday":    { "from": "09:00", "to": "12:00" },
+        "Friday":    { "from": "10:00", "to": "13:00" }
+      }
+    },
+    {
+      "id": "P9",
+      "availability": {
+        "Tuesday":   { "from": "11:00", "to": "16:00" },
+        "Thursday":  { "from": "12:00", "to": "16:00" },
+        "Friday":    { "from": "10:00", "to": "14:00" }
+      }
+    },
+    {
+      "id": "P10",
+      "availability": {
+        "Monday":    { "from": "08:00", "to": "11:00" },
+        "Wednesday": { "from": "09:00", "to": "12:00" }
+      }
+    }
+  ]
+}

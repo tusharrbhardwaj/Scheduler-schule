@@ -1,0 +1,12 @@
+{
+  "rooms": [
+    { "id": "R1", "capacity": 50 },
+    { "id": "R2", "capacity": 45 },
+    { "id": "R3", "capacity": 40 },
+    { "id": "R4", "capacity": 35 },
+    { "id": "R5", "capacity": 30 },
+    { "id": "R6", "capacity": 25 },
+    { "id": "R7", "capacity": 20 },
+    { "id": "R8", "capacity": 15 }
+  ]
+}
