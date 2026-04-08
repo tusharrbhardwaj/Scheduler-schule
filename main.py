@@ -17,6 +17,7 @@ Stage 1: Greedy Baseline ---- ./src/greedySolver.py
 Stage 0 : fetching data through fetchData.py
 '''
 from src import fetchData
+from src import graphEngine
 
 data = fetchData.Data() #data object for class Data in .src/fetchData.py
 
@@ -38,4 +39,4 @@ grouped_classes = data.classGroups()
 #timneslots : returns dictonary with data in form of dictonary
 timeslots = data.readTimeslots()
 
-print(timeslots)
+
