@@ -21,8 +21,7 @@ class Insert:
     def read_csv(self):
         with open(f"dataInput/{self.table_name}.csv") as csvfile:
             data = csv.reader(csvfile)
-            for row in data:
-                self.csv_data.append(row)
+            self.csv_data = [row for row in data if row] #if row condition removes blank row from csv to avoid conflict with db
         
         
          
@@ -48,7 +47,6 @@ class Insert:
             query = f"INSERT INTO {self.table_name} ({column_str}) VALUES ({placeholders}) ON CONFLICT DO NOTHING"
             
             confirmation = pyip.inputYesNo("Are you sure to make your changes permanent? : ")
-        
             if confirmation == 'yes':
                 cur.executemany(query, self.csv_data[1:])
                 conn.commit()
