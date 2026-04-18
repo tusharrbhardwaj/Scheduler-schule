@@ -1,14 +1,15 @@
-import dbFetch
+from datetime import time
+from data import dbFetch
 
 
 class Transformation:
     
     def __init__(self):
-        pass
+        self.data = {}
+        self.timeslots = {}
 
         
-    def readData(self,name):
-        
+    def readData(self, name):
         raw_columns, fetched_data = dbFetch.Fetch(name).data()
         
         columns = []
@@ -26,21 +27,33 @@ class Transformation:
         
         return transformed_data
     
-    
-    # def prof_avail(self,name):
-    #     raw_columns, fetched_data = dbFetch.Fetch(name).data()
-        
-    #     grouped_data = {}
-        
-    #     for eachrow in fetched_data:
+    def transform_timeslot(self):
+        rawdata = self.readData("timeslots")
+        i = 1
+        for eachrow in rawdata:
+            temp ={}
+            temp['day'] = eachrow['day']
+            temp['start_time'] = eachrow['start_time'].strftime("%H:%M")
+            temp['end_time'] = eachrow['end_time'].strftime("%H:%M")
             
-    #         if eachrow[] not in grouped_data:
-                
-    #         else :
-    #             avail[eachrow[1]][eachrow[2]] = [eachrow[3], eachrow[4]]
-                
-                
-    #     print(avail)
+            self.data[i] = temp
+            i+=1
+            
+        return self.data
+    
+    def transform_classrooms(self):
+        rawdata = self.readData("classrooms")
+        for each in rawdata:
+            self.timeslots[each['room_no']] = each['cr_capacity']
+            
+        return self.timeslots
+  
+# # name = input("Enter name : ")    
+# transform = Transformation()
+# # data = transform.transform_timeslot()
+# data = transform.transform_classrooms()
+# print(data)
+    
                 
         
         
@@ -48,15 +61,3 @@ class Transformation:
         
     
         
-trans = Transformation()
-
-a = trans.readData("classrooms")
-# print(a)
-# b = trans.prof_avail("prof_availability")
-
-# print(a)
-r_capacity = {}
-for eachclass in a:
-    r_capacity[eachclass["room_id"]] = eachclass["cr_capacity"]
-
-print(r_capacity)
