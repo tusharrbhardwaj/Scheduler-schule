@@ -17,33 +17,6 @@ Approach :
 '''
 
 '''
----------------------------------------------------------------------------------------------
-Redundent code to skip main.py in development phase
-'''
-
-import fetchData
-
-data = fetchData.Data() #data object for class Data in .src/fetchData.py
-
-#p_ids : list & p_availablity : dictonary 
-p_ids, p_availablity = data.readProfJson()
-
-#r_capacity : list
-r_capacity = data.readRooms()
-
-#groups : list && group_size : dictonary
-groups, group_size = data.readStudents()
-
-#classes : list with data in dictonary format
-classes = data.readClassConstrains()
-
-#timneslots : returns dictonary with data in form of dictonary
-timeslots = data.readTimeslots()
-'''
----------------------------------------------------------------------------------------------
-'''
-
-'''
 booked_rooms is a dictonary which will track the room and its time blockage.
 here ---
 key : (timeslot,room_id)
@@ -73,16 +46,19 @@ unsceduled_classes = []
 
 class Greedy:
     
-    def __init__(self):
-        pass
+    def __init__(self, classes, timeslots, classrooms):
+        self.classes = classes
+        self.timeslots = timeslots
+        self.classrooms = classrooms
+        
     
     def sorting_classes(self):
         '''
         sorting_classes sorts the classes forn list classes in descending order with respect to number of students in it.
         This will help assigning the larger classes room first so that large room does not get assigned to smaller calsses.
         '''
-        classes.sort(key = lambda x: x["students"], reverse=True)
-        return classes
+        self.classes.sort(key = lambda x: x["total_students"], reverse=True)
+        return self.classes
 
     def greedy_schedule(self):
         '''
@@ -116,24 +92,24 @@ class Greedy:
             assigned = False
             
             # Step 3: Try each timeslot
-            for timeslot in timeslots:
+            for timeslot in self.timeslots:
                 
                 # Step 4: Try each room for the current timeslot
-                for r_id, capacity in r_capacity.items():
+                for r_id, capacity in self.classrooms.items():
                     
                     # Check 1: Room must have enough capacity
                     # Check 2: Room must be free at this timeslot
-                    if (capacity >= eachclass["students"]) and ((timeslot, r_id) not in booked_rooms):
+                    if (capacity >= eachclass["total_students"]) and ((timeslot, r_id) not in booked_rooms):
                         
                         # Check 3: Professor must be free at this timeslot
-                        if (timeslot, eachclass["professor"]) not in booked_prof:
+                        if (timeslot, eachclass["prof_id"]) not in booked_prof:
                             
                             # Assign class to this room and timeslot
-                            booked_rooms[(timeslot, r_id)] = eachclass["id"]
-                            booked_prof[(timeslot, eachclass["professor"])] = eachclass["id"]
+                            booked_rooms[(timeslot, r_id)] = eachclass["class_id"]
+                            booked_prof[(timeslot, eachclass["prof_id"])] = eachclass["class_id"]
                             
                             # Store scheduled class with wasted capacity info
-                            scheduled_classes.append([eachclass["id"], timeslot, r_id, capacity - eachclass["students"]])
+                            scheduled_classes.append([eachclass["class_id"], timeslot, r_id, eachclass["prof_id"]])
                             assigned = True
                             break  # Exit room loop once assigned
                 
@@ -143,23 +119,24 @@ class Greedy:
             
             # If class could not be assigned to any slot
             if not assigned:
-                unsceduled_classes.append(eachclass['id'])
+                unsceduled_classes.append(eachclass['class_id'])
         
-        # Step 5: Print scheduled classes        
-        for schedule in scheduled_classes:
-            print(f"Scheduled {schedule[0]} {schedule[1]} {schedule[2]} Wasted {schedule[3]} seats")    
+        return scheduled_classes, unsceduled_classes
+        # # Step 5: Print scheduled classes        
+        # for schedule in scheduled_classes:
+        #     print(f"Scheduled {schedule[0]} {schedule[1]} {schedule[2]} Wasted {schedule[3]} seats")    
          
-        print("following are the unscheduled classes")   
-        for unschedule in unsceduled_classes:
-            print(unschedule)
+        # print("following are the unscheduled classes")   
+        # for unschedule in unsceduled_classes:
+        #     print(unschedule)
             
     
                     
 
 
 
-dsort = Greedy()
+# dsort = Greedy()
 
-soreted = dsort.sorting_classes()
+# soreted = dsort.sorting_classes()
 
-dsort.greedy_schedule()
+# dsort.greedy_schedule()
