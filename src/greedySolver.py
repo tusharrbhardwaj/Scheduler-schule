@@ -16,13 +16,7 @@ Approach :
     greedily select classes sorted based on descecnding order of class population. 
 '''
 
-'''
-booked_rooms is a dictonary which will track the room and its time blockage.
-here ---
-key : (timeslot,room_id)
-value : class_id
-'''
-booked_rooms = {}
+
 
 '''
 timeslots containts time block, each of 3 hours now which starts from 08:00 in the morning to 20:00 in night.
@@ -30,19 +24,9 @@ Henceforth 15:00 being last to be book time since the avergae duration of classe
 '''
 # timeslots = ["08:00", "11:00", "14:00", "17:00"]
 
-'''
-booked_prof is a dictonary which will track the prof and their time blockage.
-here ---
-key : (timeslot, prof_id)
-value : class_id
-'''
-booked_prof = {}
 
-'''
-unsceduled_classes for any edge case classes where it can not either be scheduled or need be scheduled somewhere else
-'''
-scheduled_classes = []
-unsceduled_classes = []
+
+
 
 class Greedy:
     
@@ -50,6 +34,28 @@ class Greedy:
         self.classes = classes
         self.timeslots = timeslots
         self.classrooms = classrooms
+        
+        '''
+        booked_rooms is a dictonary which will track the room and its time blockage.
+        here ---
+        key : (timeslot,room_id)
+        value : class_id
+        '''
+        self.booked_rooms = {}
+        
+        '''
+        booked_prof is a dictonary which will track the prof and their time blockage.
+        here ---
+        key : (timeslot, prof_id)
+        value : class_id
+        '''
+        self.booked_prof = {}
+        '''
+        
+        unsceduled_classes for any edge case classes where it can not either be scheduled or need be scheduled somewhere else
+        '''
+        self.scheduled_classes = []
+        self.unsceduled_classes = []
         
     
     def sorting_classes(self):
@@ -87,29 +93,32 @@ class Greedy:
         # Step 1: Sort classes by number of students (descending order)
         sorted_classes = self.sorting_classes()
         
+        #sorting room to ensure small room is occupied first and then it moves to bigger room instead of dictnoary order
+        sorted_rooms = sorted(self.classrooms.items(), key=lambda x: x[1])
+        
         # Step 2: Iterate through each class and try to assign it
         for eachclass in sorted_classes:
             assigned = False
             
             # Step 3: Try each timeslot
-            for timeslot in self.timeslots:
+            for timeslot_id, timeslot in self.timeslots.items():
                 
                 # Step 4: Try each room for the current timeslot
-                for r_id, capacity in self.classrooms.items():
+                for r_id, capacity in sorted_rooms:
                     
                     # Check 1: Room must have enough capacity
                     # Check 2: Room must be free at this timeslot
-                    if (capacity >= eachclass["total_students"]) and ((timeslot, r_id) not in booked_rooms):
+                    if (capacity >= eachclass["total_students"]) and ((timeslot_id, r_id) not in self.booked_rooms):
                         
                         # Check 3: Professor must be free at this timeslot
-                        if (timeslot, eachclass["prof_id"]) not in booked_prof:
+                        if (timeslot_id, eachclass["prof_id"]) not in self.booked_prof:
                             
                             # Assign class to this room and timeslot
-                            booked_rooms[(timeslot, r_id)] = eachclass["class_id"]
-                            booked_prof[(timeslot, eachclass["prof_id"])] = eachclass["class_id"]
+                            self.booked_rooms[(timeslot_id, r_id)] = eachclass["class_id"]
+                            self.booked_prof[(timeslot_id, eachclass["prof_id"])] = eachclass["class_id"]
                             
                             # Store scheduled class with wasted capacity info
-                            scheduled_classes.append([eachclass["class_id"], timeslot, r_id, eachclass["prof_id"]])
+                            self.scheduled_classes.append([eachclass["class_id"], timeslot_id, r_id, eachclass["prof_id"]])
                             assigned = True
                             break  # Exit room loop once assigned
                 
@@ -119,9 +128,9 @@ class Greedy:
             
             # If class could not be assigned to any slot
             if not assigned:
-                unsceduled_classes.append(eachclass['class_id'])
-        
-        return scheduled_classes, unsceduled_classes
+                self.unsceduled_classes.append(eachclass['class_id'])
+
+        return self.scheduled_classes, self.unsceduled_classes
         # # Step 5: Print scheduled classes        
         # for schedule in scheduled_classes:
         #     print(f"Scheduled {schedule[0]} {schedule[1]} {schedule[2]} Wasted {schedule[3]} seats")    
