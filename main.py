@@ -22,6 +22,8 @@
 from data import Transformation, Schedule
 from src import greedySolver
 from data import dbDataInsert
+from rich.console import Console
+from rich.table import Table
 
 # from src import fetchData
 
@@ -39,4 +41,15 @@ scheduled, unscheduled = greedy.greedy_schedule()
 upload = dbDataInsert.Update()
 upload.update_schedule(scheduled)
 
-Schedule.greedy_schedule()
+data  = Schedule.greedy_schedule()
+
+console = Console()
+
+table = Table(title = "Greedy Schedule", show_lines=True)
+
+for columns in data[0]:
+        table.add_column(columns, justify="center")
+for row in data[1:]:
+        table.add_row(*[str(x) for x in row])
+            
+console.print(table)
