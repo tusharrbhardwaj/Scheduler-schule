@@ -1,6 +1,4 @@
 from datetime import time
-from rich.console import Console
-from rich.table import Table
 from data import dbFetch
 
 
@@ -61,7 +59,7 @@ class Schedule:
     
     
     def greedy_schedule():
-        console = Console()
+        
         raw_data = dbFetch.Fetch("greedy_schedule").schedule_fetch()
         data = [("Class_id", "Professor", "Room_no", "Day", "From", "To", "Total_Students", "Room_capacity", "Seats_Wasted")]
         for each in raw_data:
@@ -69,14 +67,7 @@ class Schedule:
             temp.extend([each[0], each[1], each[2], each[3], each[4].strftime("%H:%M"), each[5].strftime("%H:%M"), each[6], each[7], each[8]])
             data.append(temp)
         
-        table = Table(title = "Greedy Schedule", show_lines=True)
-
-        for columns in data[0]:
-            table.add_column(columns, justify="center")
-        for row in data[1:]:
-            table.add_row(*[str(x) for x in row])
-            
-        console.print(table)
+        return data
     
     
     
