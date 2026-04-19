@@ -9,6 +9,13 @@ class Fetch:
     
     
     def data(self):
+        '''
+        clear exisiting data from table
+        '''
+        
+        cur.execute("DELETE FROM greedy_schedule")
+        conn.commit()
+        
         query = f"SELECT column_name FROM information_schema.columns WHERE table_name = '{self.table_name}'"
         cur.execute(query)
         columns = cur.fetchall()
