@@ -1,5 +1,7 @@
 from datetime import time
+from tabulate import tabulate
 from data import dbFetch
+
 
 
 class Transformation:
@@ -47,7 +49,27 @@ class Transformation:
             self.timeslots[each['room_no']] = each['cr_capacity']
             
         return self.timeslots
-  
+
+
+
+class Schedule:
+    
+    def __init__(self):
+        pass
+
+    def greedy_schedule():
+        raw_data = dbFetch.Fetch("greedy_schedule").schedule_fetch()
+        data = [("Class_id", "Professor", "Day", "From", "To", "Total_Students", "Room_capacity", "Seats_Wasted")]
+        for each in raw_data:
+            temp = []
+            temp.extend([each[0], each[1], each[2], each[3], each[4].strftime("%H:%M"), each[5].strftime("%H:%M"), each[6], each[7], each[8]])
+            data.append(temp)
+        
+        print(tabulate(data[1:], headers=data[0], tablefmt="grid"))
+    
+    
+    
+    
 # # name = input("Enter name : ")    
 # transform = Transformation()
 # # data = transform.transform_timeslot()
