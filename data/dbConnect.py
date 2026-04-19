@@ -5,10 +5,15 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def connection():  
-    db_url = os.getenv("DB_URL")
-    conn = psycopg2.connect(db_url)
-    # print("successfull")  # --- line to debug
-    return conn
+    try:
+        db_url = os.getenv("DB_URL")
+        conn = psycopg2.connect(db_url)
+        print("Connection to DB Successfull")
+        return conn
+    
+    except Exception as e:
+        print("Error Connecting to DB \n", e)
+        
 
 '''
 To test this file
