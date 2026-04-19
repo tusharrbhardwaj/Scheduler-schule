@@ -13,6 +13,7 @@ def connection():
     
     except Exception as e:
         print("Error Connecting to DB \n", e)
+        return None
         
 
 '''
