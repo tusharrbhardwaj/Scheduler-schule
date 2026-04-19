@@ -22,7 +22,7 @@ class Data:
         
         '''
         try:
-            with open('./data/prof_availablity.json') as available_profs_data:
+            with open('jsonData/prof_availablity.json') as available_profs_data:
                 available_profs = json.load(available_profs_data)
                 p_ids = [prof["id"] for prof in available_profs["professors"]]
                 p_availablity= {prof["id"] : prof["availability"] for prof in available_profs["professors"]}
@@ -46,7 +46,7 @@ class Data:
             throws an error stating Error loading file rooms.json
         '''
         try:
-            with open('./data/rooms.json') as available_rooms_data:
+            with open('jsondata/rooms.json') as available_rooms_data:
                 available_rooms = json.load(available_rooms_data)
                 r_capacity = {room["id"] : room["capacity"] for room in available_rooms["rooms"]}
                 
@@ -109,7 +109,7 @@ class Data:
             throws an error stating Error loading file constraints.js
         '''
         try:
-            with open('./data/constraints.json') as class_constraints: 
+            with open('jsonData/constraints.json') as class_constraints: 
                 classes_raw = json.load(class_constraints)
                 classes = [class_data for class_data in classes_raw["classes"]]
                 
@@ -159,7 +159,7 @@ class Data:
             throws an error stating Error loading file timeslot.json
         '''
         try:
-            with open('./data/timeslot.json') as alltimeslots:
+            with open('jsonData/timeslot.json') as alltimeslots:
                 timeslots = json.load(alltimeslots)
 
                 return timeslots                   
@@ -170,4 +170,8 @@ class Data:
             
             return None, None
         
-        
+  
+data = Data()
+# print(data.readRooms())
+print(data.readRooms())
+      
