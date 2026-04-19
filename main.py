@@ -25,34 +25,44 @@ from data import dbDataInsert
 from rich.console import Console
 from rich.table import Table
 
-# from src import fetchData
+def scheduling():
+    try:
+        # Stage 1: Fetch
+        transform = Transformation()
+        classes = transform.readData("classes")
+        timeslots = transform.transform_timeslot()
+        classrooms = transform.transform_classrooms()
 
-transform = Transformation()
-classes = transform.readData("classes")
-timeslots = transform.transform_timeslot()
-classrooms = transform.transform_classrooms()
+        # Stage 2: Schedule
+        greedy = greedySolver.Greedy(classes, timeslots, classrooms)
+        scheduled, unscheduled = greedy.greedy_schedule()
 
-greedy = greedySolver.Greedy(classes,timeslots,classrooms)
+        # Stage 3: Store
+        upload = dbDataInsert.Update()
+        upload.update_schedule(scheduled)
 
-sorted_classes = greedy.sorting_classes()
-scheduled, unscheduled = greedy.greedy_schedule()
+        # Stage 4: Fetch + Display
+        data = Schedule.greedy_schedule()
 
+        console = Console(record=True)
+        table = Table(title="Greedy Schedule", show_lines=True)
 
-upload = dbDataInsert.Update()
-upload.update_schedule(scheduled)
+        for col in data[0]:
+            table.add_column(col, justify="center")
 
-data  = Schedule.greedy_schedule()
+        for row in data[1:]:
+            table.add_row(*[str(x) for x in row])
 
-console = Console(record=True)
+        console.print(table)
 
-table = Table(title = "Greedy Schedule", show_lines=True)
+        # Save output
+        with open('output/greedy_output.txt', 'w') as file:
+            file.write(console.export_text())
 
-for columns in data[0]:
-        table.add_column(columns, justify="center")
-for row in data[1:]:
-        table.add_row(*[str(x) for x in row])
-            
-print("data saved to 'ouput/greedy_schedule.txt")
+        print("Data saved to output/greedy_output.txt")
 
-with open('output/greedy_output.txt', 'w') as file:
-    file.write(console.export_text())
+    except Exception as e:
+        print("Scheduling pipeline failed:\n", e)
+        
+if __name__ == "__main__":
+        scheduling()
