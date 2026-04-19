@@ -64,8 +64,17 @@ class Insert:
             print("DB :", db_headers)
             
         
+class Update:
+    def __init__(self):
+        pass
+    
+    def update_schedule(self, scheduled):
+        table = "greedy_schedule"
+        query = f"INSERT INTO {table} (class_id, timeslot_id, room_no, prof_id) values (%s, %s, %s, %s)"
+        cur.executemany(query, scheduled)
+        conn.commit()
+        print(f"Greedy Scheduled Saved Successfully!     {len(scheduled)} rows inserted")
         
-        
-table_name = input("Enter the name of the table you want to enter data into : ")
-upload = Insert(table_name)
-upload.upload_data()
+# table_name = input("Enter the name of the table you want to enter data into : ")
+# upload = Insert(table_name)
+# upload.upload_data()
