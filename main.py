@@ -43,7 +43,7 @@ upload.update_schedule(scheduled)
 
 data  = Schedule.greedy_schedule()
 
-console = Console()
+console = Console(record=True)
 
 table = Table(title = "Greedy Schedule", show_lines=True)
 
@@ -52,4 +52,7 @@ for columns in data[0]:
 for row in data[1:]:
         table.add_row(*[str(x) for x in row])
             
-console.print(table)
+print("data saved to 'ouput/greedy_schedule.txt")
+
+with open('output/greedy_output.txt', 'w') as file:
+    file.write(console.export_text())
