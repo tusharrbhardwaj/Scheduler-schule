@@ -119,5 +119,5 @@ def graph_engine():
 
         
 if __name__ == "__main__":
-        # greedy_scheduling()
+        greedy_scheduling()
         graph_engine()
