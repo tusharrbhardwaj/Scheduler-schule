@@ -133,7 +133,7 @@ class Data:
             throws an error stating Error loading file class_group.json
         '''
         try:
-            with open('./data/class_group.json') as class_grp_division: 
+            with open('jsonData/class_group.json') as class_grp_division: 
                 class_group_data = json.load(class_grp_division)
                 grouped_calsses = {}
                 for eachgrp,eachclass in class_group_data["group_classes"].items():
@@ -173,5 +173,5 @@ class Data:
   
 data = Data()
 # print(data.readRooms())
-print(data.readRooms())
+print(data.classGroups())
       
