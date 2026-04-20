@@ -29,10 +29,9 @@ class Fetch:
             print(f"Some Error Ocuured while fetching data from table {self.table_name} : {e}")
             return None, None
     
-    def schedule_fetch(self):
+    def greedyschedule_fetch(self):
         
         try:
-            
             query = f'''
             SELECT 
                 gs.class_id,
@@ -71,5 +70,42 @@ class Fetch:
             return data
         
         except Exception as e:
-            print("Data could not be uploaded to greedy_schedule \n", e)
+            print("Data could not be fetched from greedy_schedule \n", e)
+            return None
+        
+    def graphschedule_fetch(self):
+        
+        try:
+            
+            query = f'''
+            SELECT 
+                gs.class_id,
+                p.prof_name,
+                t.day,
+                t.start_time,
+                t.end_time
+
+            FROM graph_schedule gs
+
+            JOIN classes c 
+                ON gs.class_id = c.class_id
+
+            JOIN professor p 
+                ON gs.prof_id = p.prof_id
+
+            JOIN timeslots t 
+                ON gs.timeslot_id = t.timeslot_id
+
+            ORDER BY 
+                t.day,
+                t.start_time;
+            '''
+            
+            cur.execute(query)
+            data = cur.fetchall()
+            print("Graph_Schedule fetched from DB")
+            return data
+        
+        except Exception as e:
+            print("Data could not be fetched from graph_schedule \n", e)
             return None
