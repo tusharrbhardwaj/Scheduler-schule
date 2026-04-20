@@ -8,6 +8,7 @@ class Transformation:
     def __init__(self):
         self.data = {}
         self.timeslots = {}
+        self.class_groups = {}
 
         
     def readData(self, name):
@@ -49,7 +50,7 @@ class Transformation:
                 self.data[i] = temp
                 i+=1
             
-            print("Timeslots cannot be transformed to usable data.\n")
+            print("Timeslots successfully transformed to usable data.\n")
             return self.data
         
         except Exception as e:
@@ -69,7 +70,26 @@ class Transformation:
         except Exception as e:
             print("Error occured while transforming classroom data.\n", e)
 
-
+    def transform_classgroups(self):
+        try:
+            
+            rawdata = self.readData("class_groups")
+            
+            
+            for eachrow in rawdata:
+                temp = {}
+                key = eachrow['group_id']
+                value = eachrow['class_id']
+                if key in self.class_groups:
+                    self.class_groups[key].append(value)
+                else:
+                    self.class_groups[key] = [value]
+            
+            print("Timeslots successfully transformed to usable data.\n")
+            return self.class_groups 
+            
+        except Exception as e:
+            print("Error occured while transforming class and data.\n", e)
 
 class Schedule:
     
@@ -82,7 +102,7 @@ class Schedule:
         
         try:
             
-            raw_data = dbFetch.Fetch("greedy_schedule").schedule_fetch()
+            raw_data = dbFetch.Fetch("greedy_schedule").greedyschedule_fetch()
             data = [("Class_id", "Professor", "Room_no", "Day", "From", "To", "Total_Students", "Room_capacity", "Seats_Wasted")]
             for each in raw_data:
                 temp = []
@@ -92,22 +112,36 @@ class Schedule:
             return data
         
         except Exception as e:
-            print("Scheduled data could not be transformed.\n", e)
+            print("Greedily Scheduled data could not be transformed.\n", e)
             return None
     
-    
-    
-    
-# # name = input("Enter name : ")    
-# transform = Transformation()
-# # data = transform.transform_timeslot()
-# data = transform.transform_classrooms()
-# print(data)
-    
-                
+    def graph_schedule():
         
+        try:
+            
+            raw_data = dbFetch.Fetch("greedy_schedule").graphschedule_fetch()
+            data = [("Class_id", "Professor", "Day", "From", "To")]
+            for each in raw_data:
+                temp = []
+                temp.extend([each[0], each[1], each[2], each[3].strftime("%H:%M"), each[4].strftime("%H:%M")])
+                data.append(temp)
+            print("Graph Schedule Tranformed.\n")
+            return data
+        
+        except Exception as e:
+            print("Graphically Scheduled data could not be transformed.\n", e)
+            return None
+    
+# # # name = input("Enter name : ")    
+# transform = Transformation()
+# # # data = transform.transform_timeslot()
+# # data = transform.transform_classrooms()
+# # print(data)
+
+                
+# data = transform.readData("classes")     
+# print(data)
         
        
-        
-    
+
         
