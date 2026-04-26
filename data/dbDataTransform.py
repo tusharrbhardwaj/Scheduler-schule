@@ -9,6 +9,7 @@ class Transformation:
         self.data = {}
         self.timeslots = {}
         self.class_groups = {}
+        self.prof_availablity = {}
 
         
     def readData(self, name):
@@ -44,8 +45,8 @@ class Transformation:
             for eachrow in rawdata:
                 temp ={}
                 temp['day'] = eachrow['day']
-                temp['start_time'] = eachrow['start_time'].strftime("%H:%M")
-                temp['end_time'] = eachrow['end_time'].strftime("%H:%M")
+                temp['start_time'] = eachrow['start_time']
+                temp['end_time'] = eachrow['end_time']
                 
                 self.data[i] = temp
                 i+=1
@@ -85,12 +86,42 @@ class Transformation:
                 else:
                     self.class_groups[key] = [value]
             
-            print("Timeslots successfully transformed to usable data.\n")
+            print("Class_groups successfully transformed to usable data.\n")
             return self.class_groups 
             
         except Exception as e:
             print("Error occured while transforming class and data.\n", e)
+            
+    def transform_prof_availablity(self):
+        try:
+            rawdata = self.readData("prof_availability")
 
+            i = 1
+            for eachrow in rawdata:
+                temp ={}
+                prof_id = eachrow['prof_id']
+                temp['day'] = eachrow['day']
+                temp['start_time'] = eachrow['start_time']
+                temp['end_time'] = eachrow['end_time']
+                
+                if prof_id in self.prof_availablity:
+                    self.prof_availablity[prof_id].append(temp)
+                else:
+                    self.prof_availablity[prof_id] = [temp,]
+
+                
+            
+            print("Timeslots successfully transformed to usable data.\n")
+            return self.prof_availablity
+    
+        except Exception as e:
+            print("Error occured while transforming class and data.\n", e)
+            
+            
+            
+            
+            
+            
 class Schedule:
     
    
@@ -133,14 +164,15 @@ class Schedule:
             return None
     
 # # # name = input("Enter name : ")    
-# transform = Transformation()
+transform = Transformation()
 # # # data = transform.transform_timeslot()
 # # data = transform.transform_classrooms()
 # # print(data)
 
                 
-# data = transform.readData("classes")     
-# print(data)
+# data = transform.readData("prof_availability")     
+data = transform.transform_prof_availablity()
+print(data)
         
        
 
