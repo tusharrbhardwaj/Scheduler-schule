@@ -34,7 +34,7 @@ classes = transform.readData("classes")
 timeslots = transform.transform_timeslot()
 classrooms = transform.transform_classrooms()
 class_groups = transform.transform_classgroups()
-
+prof_availablity = transform.transform_prof_availablity()
 #insert in db
 upload = dbDataInsert.Update()
 
@@ -44,7 +44,7 @@ console = Console(record=True)
 def greedy_scheduling():
     try:
         # Stage 2: Schedule
-        greedy = greedySolver.Greedy(classes, timeslots, classrooms)
+        greedy = greedySolver.Greedy(classes, timeslots, classrooms, prof_availablity)
         scheduled, unscheduled = greedy.greedy_schedule()
 
         # Stage 3: Store
@@ -68,6 +68,8 @@ def greedy_scheduling():
             file.write(console.export_text())
 
         print("Data saved to output/greedy_output.txt")
+        
+        print(f"{len(unscheduled)} classes left unscheduled using greedySolver : \n", unscheduled)
 
     except Exception as e:
         print("Scheduling pipeline failed:\n", e)
@@ -120,4 +122,9 @@ def graph_engine():
         
 if __name__ == "__main__":
         greedy_scheduling()
-        graph_engine()
+        # graph_engine()
+        
+        
+# add room constraint to graphEngine
+
+# add prof pref to greedy 
