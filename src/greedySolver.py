@@ -24,16 +24,17 @@ Henceforth 15:00 being last to be book time since the avergae duration of classe
 '''
 # timeslots = ["08:00", "11:00", "14:00", "17:00"]
 
-
+import datetime
 
 
 
 class Greedy:
     
-    def __init__(self, classes, timeslots, classrooms):
+    def __init__(self, classes, timeslots, classrooms, prof_availablity):
         self.classes = classes
         self.timeslots = timeslots
         self.classrooms = classrooms
+        self.prof_availablity = prof_availablity
         
         '''
         booked_rooms is a dictonary which will track the room and its time blockage.
@@ -66,6 +67,21 @@ class Greedy:
         self.classes.sort(key = lambda x: x["total_students"], reverse=True)
         return self.classes
 
+    
+    def is_prof_available(self, prof_id, timeslot):
+        
+        prof_slots = self.prof_availablity.get(prof_id, [])
+        
+        for slot in prof_slots:
+            if(slot['day'] == timeslot["day"]
+                and slot['start_time'] <= timeslot['start_time']
+                and slot['end_time'] >= timeslot['end_time']
+                ):
+                    return True
+            
+        return False
+    
+    
     def greedy_schedule(self):
         '''
         greedy_schedule implements a greedy scheduling algorithm to assign classes to available time slots and rooms.
@@ -103,29 +119,31 @@ class Greedy:
             # Step 3: Try each timeslot
             for timeslot_id, timeslot in self.timeslots.items():
                 
-                # Step 4: Try each room for the current timeslot
-                for r_id, capacity in sorted_rooms:
-                    
-                    # Check 1: Room must have enough capacity
-                    # Check 2: Room must be free at this timeslot
-                    if (capacity >= eachclass["total_students"]) and ((timeslot_id, r_id) not in self.booked_rooms):
-                        
-                        # Check 3: Professor must be free at this timeslot
-                        if (timeslot_id, eachclass["prof_id"]) not in self.booked_prof:
-                            
-                            # Assign class to this room and timeslot
-                            self.booked_rooms[(timeslot_id, r_id)] = eachclass["class_id"]
-                            self.booked_prof[(timeslot_id, eachclass["prof_id"])] = eachclass["class_id"]
-                            
-                            # Store scheduled class with wasted capacity info
-                            self.scheduled_classes.append([eachclass["class_id"], timeslot_id, r_id, eachclass["prof_id"]])
-                            assigned = True
-                            break  # Exit room loop once assigned
+                if self.is_prof_available(eachclass["prof_id"], timeslot):
                 
-                # If assigned, stop checking further timeslots
-                if assigned:
-                    break
-            
+                    # Step 4: Try each room for the current timeslot
+                    for r_id, capacity in sorted_rooms:
+                        
+                        # Check 1: Room must have enough capacity
+                        # Check 2: Room must be free at this timeslot
+                        if (capacity >= eachclass["total_students"]) and ((timeslot_id, r_id) not in self.booked_rooms):
+                            
+                            # Check 3: Professor must be free at this timeslot
+                            if (timeslot_id, eachclass["prof_id"]) not in self.booked_prof:
+                                
+                                # Assign class to this room and timeslot
+                                self.booked_rooms[(timeslot_id, r_id)] = eachclass["class_id"]
+                                self.booked_prof[(timeslot_id, eachclass["prof_id"])] = eachclass["class_id"]
+                                
+                                # Store scheduled class with wasted capacity info
+                                self.scheduled_classes.append([eachclass["class_id"], timeslot_id, r_id, eachclass["prof_id"]])
+                                assigned = True
+                                break  # Exit room loop once assigned
+                    
+                    # If assigned, stop checking further timeslots
+                    if assigned:
+                        break
+                    
             # If class could not be assigned to any slot
             if not assigned:
                 self.unsceduled_classes.append(eachclass['class_id'])
