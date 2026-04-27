@@ -134,10 +134,10 @@ class Schedule:
         try:
             
             raw_data = dbFetch.Fetch("greedy_schedule").greedyschedule_fetch()
-            data = [("Class_id", "Professor", "Room_no", "Day", "From", "To", "Total_Students", "Room_capacity", "Seats_Wasted")]
+            data = [("Class_id", "Professor", "Programme_name","Module", "Group", "Room_no", "Day", "From", "To", "Total_Students", "Room_capacity", "Seats_Wasted")]
             for each in raw_data:
                 temp = []
-                temp.extend([each[0], each[1], each[2], each[3], each[4].strftime("%H:%M"), each[5].strftime("%H:%M"), each[6], each[7], each[8]])
+                temp.extend([each[0], each[1], each[2], each[3], each[4], each[5], each[6], each[7].strftime("%H:%M"), each[8].strftime("%H:%M"), each[9], each[10], each[11]])
                 data.append(temp)
             print("Greedy Schedule Tranformed.\n")
             return data
@@ -163,15 +163,9 @@ class Schedule:
             print("Graphically Scheduled data could not be transformed.\n", e)
             return None
     
-# # # name = input("Enter name : ")    
+  
 transform = Transformation()
-# # # data = transform.transform_timeslot()
-# # data = transform.transform_classrooms()
-# # print(data)
-
-                
-# data = transform.readData("prof_availability")     
-data = transform.transform_prof_availablity()
+data = transform.readData("classes")
 print(data)
         
        

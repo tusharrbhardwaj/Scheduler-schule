@@ -79,9 +79,11 @@ class Update:
     
     def update_greedyschedule(self, scheduled):
         try:
-            
             table = "greedy_schedule"
-            query = f"INSERT INTO {table} (class_id, timeslot_id, room_no, prof_id) values (%s, %s, %s, %s)"
+            
+            cur.execute(f"TRUNCATE TABLE {table};")
+            
+            query = f"INSERT INTO {table} (class_id, cid, module, group_id, timeslot_id, room_no, prof_id) values (%s, %s, %s, %s, %s, %s, %s)"
             cur.executemany(query, scheduled)
             conn.commit()
             print(f"Greedy Scheduled Saved Successfully!\n{len(scheduled)} rows inserted")
@@ -91,8 +93,10 @@ class Update:
             
     def update_graphschedule(self, graph_schedule):
         try:
-            
             table = "graph_schedule"
+            
+            cur.execute(f"TRUNCATE TABLE {table};")
+            
             query = f"INSERT INTO {table} (class_id, timeslot_id, prof_id) values (%s, %s, %s)"
             cur.executemany(query, graph_schedule)
             conn.commit()
@@ -101,6 +105,9 @@ class Update:
         except Exception as e:
             print("Graph Schedule could not be updated.\n", e)
         
-# table_name = input("Enter the name of the table you want to enter data into : ")
-# upload = Insert(table_name)
-# upload.upload_data()
+
+
+if __name__ == "__main__":
+    table_name = input("Enter the name of the table you want to enter data into : ")
+    upload = Insert(table_name)
+    upload.upload_data()
