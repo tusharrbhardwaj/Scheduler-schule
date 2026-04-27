@@ -14,31 +14,6 @@ Outcome:
 - Efficient use of minimum time slots
 """
 
-
-
-# ------------------------------------------------------------
-# Data Loading Section
-# ------------------------------------------------------------
-
-# data = fetchData.Data()
-
-# # Professor data
-# p_ids, p_availablity = data.readProfJson()
-
-
-# # Student group data
-# groups, group_size = data.readStudents()
-
-
-
-# # Available time slots (dictionary: T1 → {day, start, end})
-# timeslots = data.readTimeslots()
-
-
-# ------------------------------------------------------------
-# Graph Generator Class
-# ------------------------------------------------------------
-
 class graph_generator():
     """
     Generates a conflict graph and applies graph coloring
@@ -48,15 +23,18 @@ class graph_generator():
         graph (dict): Adjacency list representing conflicts
     """
     
-    def __init__(self, classes, class_groups, timeslots):
+    def __init__(self, classes, timeslots, prof_availablity):
         """Initialize an empty graph."""
-        self.graph = {}
         self.classes = classes
-        self.class_groups = class_groups
         self.timeslots = timeslots
+        self.prof_availablity = prof_availablity
+        self.class_map = {cl['class_id'] : cl for cl in self.classes}
+        self.unscheduled = []
+        self.graph = {}
         self.result = []
 
     def conflict_graph(self):
+        self.graph = {}
         """
         Builds the conflict graph.
 
@@ -71,32 +49,25 @@ class graph_generator():
         for eachclass in self.classes:
             
             # Initialize adjacency list for each class
-            self.graph[eachclass['class_id']] = []
+            self.graph[eachclass['class_id']] = set()
 
             # ------------------------------------------------
             # 1. Professor Conflict
             # ------------------------------------------------
-            for sameprof in self.classes:
+            for conflicts in self.classes:
+                
+                if eachclass['class_id'] == conflicts['class_id']:
+                    continue
+                
+                if (eachclass['prof_id'] == conflicts['prof_id']):
+                    self.graph[eachclass['class_id']].add(conflicts['class_id'])
+                    
                 if (
-                    eachclass['prof_id'] == sameprof['prof_id']
-                    and sameprof['class_id'] != eachclass['class_id']
-                ):
-                    self.graph[eachclass['class_id']].append(sameprof['class_id'])
-
-            # ------------------------------------------------
-            # 2. Student Group Conflict
-            # ------------------------------------------------
-            for eachgroup in self.class_groups:
-                conflict_group = self.class_groups[eachgroup]
-
-                if eachclass['class_id'] in conflict_group:
-                    for everygrp in conflict_group:
-                        if (
-                            everygrp != eachclass['class_id']
-                            and everygrp not in self.graph[eachclass['class_id']]
-                        ):
-                            self.graph[eachclass['class_id']].append(everygrp)
-
+                    eachclass['cid'] == conflicts['cid']
+                    and eachclass['group_id'] == conflicts['group_id']
+                ):  
+                    self.graph[eachclass['class_id']].add(conflicts['class_id'])
+                            
         return self.graph
 
     def sorted_graph(self):
@@ -122,7 +93,22 @@ class graph_generator():
 
         return sorted_nodes_graph
 
+    
+    def is_prof_available(self, prof_id, timeslot):
+        
+        prof_slots = self.prof_availablity.get(prof_id, [])
+        
+        for slot in prof_slots:
+            if(slot['day'] == timeslot["day"]
+                and slot['start_time'] <= timeslot['start_time']
+                and slot['end_time'] >= timeslot['end_time']
+                ):
+                    return True
+            
+        return False
+    
     def coloring_graph(self):
+        self.unscheduled = []
         """
         Apply greedy graph coloring (Welsh–Powell heuristic).
 
@@ -135,25 +121,42 @@ class graph_generator():
         sorted_nodes_graph = self.sorted_graph()
         colored_graph = {}
 
+        
+        timeslot_keys = list(self.timeslots.keys())
+        
         for eachnode in sorted_nodes_graph:
-            color = 0
-            used_colors = set()
+            cls = self.class_map[eachnode]
+            prof_id = cls['prof_id']
 
+            used_colors = set()
+                
             # Collect colors used by neighbors
             neighbors = self.graph[eachnode]
             for eachneighbor in neighbors:
                 if eachneighbor in colored_graph:
                     used_colors.add(colored_graph[eachneighbor])
-
-            # Assign smallest unused color
-            while color in used_colors:
-                color += 1
-
-            colored_graph[eachnode] = color
+            
+            color = 0
+            
+            while True:
+                if color >= len(timeslot_keys):
+                    self.unscheduled.append(eachnode)
+                    # print(f"{eachnode} is unscheduled class")
+                    break
+                
+                timeslot = self.timeslots[timeslot_keys[color]]
+                # Assign smallest unused color
+                if color not in used_colors and self.is_prof_available(prof_id, timeslot):
+                    colored_graph[eachnode] = color
+                    break
+                else:
+                    color += 1
 
         return colored_graph
+    
 
-    def timeslot_mapping(self):
+    def timeslot_mapping(self, colored):
+        self.result = []
         """
         Maps assigned colors to actual time slots.
 
@@ -162,8 +165,7 @@ class graph_generator():
         Prints:
             Class → Assigned timeslot details
         """
-        colored_graph = self.coloring_graph()
-
+        colored_graph = colored
         # Extract timeslot keys in order
         timeslot_keys = list(self.timeslots.keys())
 
@@ -177,13 +179,13 @@ class graph_generator():
 
             # Map color → timeslot
             slot_key = timeslot_keys[color_index]
+            cls = self.class_map[eachclass]
             
             '''to add prof to result'''
-            class_to_prof = {cls['class_id']: cls['prof_id'] for cls in self.classes}
-            self.result.append([eachclass, slot_key, class_to_prof.get(eachclass)])
+            self.result.append([eachclass, slot_key, cls['prof_id'], cls['cid'], cls['group_id']])
         return self.result
 
-    def validate_schedule(self):
+    def validate_schedule(self, colored):
         """
         Validates that no conflicting classes share the same timeslot.
 
@@ -191,22 +193,19 @@ class graph_generator():
             - Conflict details if found
             - Success message if schedule is valid
         """
-        colored_graph = self.coloring_graph()
+        colored_graph = colored
         conflict_found = False
 
         for node in self.graph:
             for neighbor in self.graph[node]:
-                if colored_graph[node] == colored_graph[neighbor]:
-                    print(f"Conflict: {node} and {neighbor} share same slot")
-                    conflict_found = True
+                if node in colored_graph and neighbor in colored_graph:
+                    if colored_graph[node] == colored_graph[neighbor]:
+                        print(f"Conflict: {node} and {neighbor} share same slot")
+                        conflict_found = True
 
         if not conflict_found:
             print("Schedule Validated successfully")
 
-
-# ------------------------------------------------------------
-# Execution Section
-# ------------------------------------------------------------
 
 # graphing = graph_generator()
 
