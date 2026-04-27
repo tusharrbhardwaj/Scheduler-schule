@@ -152,7 +152,7 @@ class graph_generator():
                 else:
                     color += 1
 
-        return colored_graph
+        return colored_graph, self.unscheduled
     
 
     def timeslot_mapping(self, colored):
