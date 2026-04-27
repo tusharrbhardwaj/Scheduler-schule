@@ -87,26 +87,37 @@ class Fetch:
             
             query = f'''
             SELECT 
-                gs.class_id,
-                p.prof_name,
-                t.day,
-                t.start_time,
-                t.end_time
+            gs.class_id,
+
+            p.prof_name,
+            pr.programme_name,
+            c.module,
+            st.group_name,
+
+            t.day,
+            t.start_time,
+            t.end_time
 
             FROM graph_schedule gs
 
             JOIN classes c 
                 ON gs.class_id = c.class_id
 
+            JOIN programmes pr
+                ON c.cid = pr.cid
+
+            JOIN student_groups st
+                ON gs.group_id = st.group_id
+    
             JOIN professor p 
-                ON gs.prof_id = p.prof_id
+                ON c.prof_id = p.prof_id
 
             JOIN timeslots t 
                 ON gs.timeslot_id = t.timeslot_id
 
-            ORDER BY 
-                t.day,
-                t.start_time;
+        ORDER BY 
+            t.day,
+            t.start_time;
             '''
             
             cur.execute(query)

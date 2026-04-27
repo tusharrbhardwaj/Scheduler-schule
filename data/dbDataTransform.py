@@ -151,10 +151,10 @@ class Schedule:
         try:
             
             raw_data = dbFetch.Fetch("greedy_schedule").graphschedule_fetch()
-            data = [("Class_id", "Professor", "Day", "From", "To")]
+            data = [("Class_id", "Professor", "Programme-name", "Module", "Group", "Day", "From", "To")]
             for each in raw_data:
                 temp = []
-                temp.extend([each[0], each[1], each[2], each[3].strftime("%H:%M"), each[4].strftime("%H:%M")])
+                temp.extend([each[0], each[1], each[2], each[3], each[4], each[5],each[6].strftime("%H:%M"), each[7].strftime("%H:%M")])
                 data.append(temp)
             print("Graph Schedule Tranformed.\n")
             return data
@@ -164,9 +164,9 @@ class Schedule:
             return None
     
   
-transform = Transformation()
-data = transform.readData("classes")
-print(data)
+# transform = Transformation()
+# data = transform.readData("classes")
+# print(data)
         
        
 

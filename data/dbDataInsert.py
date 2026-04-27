@@ -97,7 +97,7 @@ class Update:
             
             cur.execute(f"TRUNCATE TABLE {table};")
             
-            query = f"INSERT INTO {table} (class_id, timeslot_id, prof_id) values (%s, %s, %s)"
+            query = f"INSERT INTO {table} (class_id, timeslot_id, prof_id, cid, group_id) values (%s, %s, %s, %s, %s)"
             cur.executemany(query, graph_schedule)
             conn.commit()
             print(f"Graph Scheduled Saved Successfully!\n{len(graph_schedule)} rows inserted")
