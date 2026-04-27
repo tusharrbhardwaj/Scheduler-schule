@@ -18,16 +18,6 @@ Approach :
 
 
 
-'''
-timeslots containts time block, each of 3 hours now which starts from 08:00 in the morning to 20:00 in night.
-Henceforth 15:00 being last to be book time since the avergae duration of classes are 3 hours, booking at 15:00 would imply its end at 20:00 (end time of time-block)
-'''
-# timeslots = ["08:00", "11:00", "14:00", "17:00"]
-
-import datetime
-
-
-
 class Greedy:
     
     def __init__(self, classes, timeslots, classrooms, prof_availablity):
@@ -52,9 +42,11 @@ class Greedy:
         '''
         self.booked_prof = {}
         '''
-        
         unsceduled_classes for any edge case classes where it can not either be scheduled or need be scheduled somewhere else
         '''
+        
+        self.booked_groups ={}
+        
         self.scheduled_classes = []
         self.unsceduled_classes = []
         
@@ -121,28 +113,34 @@ class Greedy:
                 
                 if self.is_prof_available(eachclass["prof_id"], timeslot):
                 
+                    if(timeslot_id, eachclass['cid'], eachclass['group_id']) not in self.booked_groups:
                     # Step 4: Try each room for the current timeslot
-                    for r_id, capacity in sorted_rooms:
-                        
-                        # Check 1: Room must have enough capacity
-                        # Check 2: Room must be free at this timeslot
-                        if (capacity >= eachclass["total_students"]) and ((timeslot_id, r_id) not in self.booked_rooms):
+                        for r_id, capacity in sorted_rooms:
                             
-                            # Check 3: Professor must be free at this timeslot
-                            if (timeslot_id, eachclass["prof_id"]) not in self.booked_prof:
+                            # Check 1: Room must have enough capacity
+                            # Check 2: Room must be free at this timeslot
+                            if (capacity >= eachclass["total_students"]) and ((timeslot_id, r_id) not in self.booked_rooms):
                                 
-                                # Assign class to this room and timeslot
-                                self.booked_rooms[(timeslot_id, r_id)] = eachclass["class_id"]
-                                self.booked_prof[(timeslot_id, eachclass["prof_id"])] = eachclass["class_id"]
-                                
-                                # Store scheduled class with wasted capacity info
-                                self.scheduled_classes.append([eachclass["class_id"], timeslot_id, r_id, eachclass["prof_id"]])
-                                assigned = True
-                                break  # Exit room loop once assigned
-                    
-                    # If assigned, stop checking further timeslots
-                    if assigned:
-                        break
+                                # Check 3: Professor must be free at this timeslot
+                                if (timeslot_id, eachclass["prof_id"]) not in self.booked_prof:
+                                    
+                                    # Assign class to this room and timeslot
+                                    self.booked_rooms[(timeslot_id, r_id)] = eachclass["class_id"]
+                                    self.booked_prof[(timeslot_id, eachclass["prof_id"])] = eachclass["class_id"]
+                                    
+                                    self.booked_groups[(timeslot_id, eachclass['cid'], eachclass['group_id'])] = eachclass['class_id']
+                                    # Store scheduled class with wasted capacity info
+                                    self.scheduled_classes.append([eachclass["class_id"], eachclass['cid'], eachclass['module'], eachclass['group_id'], timeslot_id, r_id, eachclass["prof_id"]])
+                                    
+                                    
+                                    
+                                    assigned = True
+                                    break  # Exit room loop once assigned
+                        
+                        # If assigned, stop checking further timeslots
+                        if assigned:
+                            break
+                        
                     
             # If class could not be assigned to any slot
             if not assigned:
