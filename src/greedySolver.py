@@ -136,6 +136,7 @@ class Greedy:
                                     
                                     assigned = True
                                     break  # Exit room loop once assigned
+                            
                         
                         # If assigned, stop checking further timeslots
                         if assigned:
