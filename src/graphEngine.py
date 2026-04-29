@@ -182,7 +182,7 @@ class graph_generator():
             cls = self.class_map[eachclass]
             
             '''to add prof to result'''
-            self.result.append([eachclass, slot_key, cls['prof_id'], cls['cid'], cls['group_id']])
+            self.result.append([eachclass, slot_key, cls['prof_id'], cls['cid'], cls['group_id'], cls['total_students']])
         return self.result
 
     def validate_schedule(self, colored):
