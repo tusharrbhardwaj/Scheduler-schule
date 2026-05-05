@@ -16,18 +16,18 @@ class efficient:
                 timeslot_map[timeslot] = [[eachclass[0], eachclass[-1]]]
         
         # making classroom input for dp to consume
-        self.capacity = [value for value in self.classrooms.values()]
-        self.capacity = sorted(self.capacity, reverse=True)
         
         # making dp input as in class_id = [] and strenth = [] for each timeslot
         for each_timeslot in timeslot_map.values():
             strength = []
             classes = []
+            
+            
             for eachclass in each_timeslot:
                 strength.append(eachclass[1])
                 classes.append(eachclass[0])
                 
-                
+            strength, classes = map(list, zip(*sorted(zip(classes, strength), key=lambda x: x[1], reverse=True)))
             self.dynamic_program(strength, classes)
 
         
@@ -36,35 +36,32 @@ class efficient:
     
     def dynamic_program(self, strength, classes):
         used_room = set()
-        path = {}
-        i = 0
-        for eachcls in classes:
+        allocation = {}
+        
+        for index, eachcls in enumerate(classes):
             eligible = {}
-            index = classes.index(eachcls)
-            for eachroom in self.classrooms:
-                seat_wasted = 0
-                capacity = self.classrooms[eachroom]
-                temp_path = []
-                temp = {}
+            
+            for eachroom, capacity in self.classrooms.items():
+                
+                
                 if eachroom in used_room:
                     continue
-                else:
-                    if strength[index] <= capacity:
-                        seat_wasted = seat_wasted + capacity-strength[index]
-                        temp[eachcls] = eachroom
-                        temp_path.append(temp)
-                        i += 1
                 
-                        eligible[eachroom] = seat_wasted
                 
-                if len(eligible) == 0:
-                    print("Cannot Schedule this class")
-                    
+                if strength[index] <= capacity:
+                    eligible[eachroom] = capacity - strength[index]
+
+            
+            if not eligible:
+                print(f"Cannot Schedule class {eachcls}")
+                continue
             
             best_room = min(eligible, key = eligible.get)
                     
-            path[i] = temp_path
+            allocation[eachcls] = best_room
             used_room.add(best_room)
+        
+        print(allocation)
         
         
             
