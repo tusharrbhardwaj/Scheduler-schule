@@ -6,8 +6,11 @@ import csv
 import pyinputplus as pyip
 from data import connection
 
-conn = connection()
-cur = conn.cursor()
+try:
+    conn = connection()
+    cur = conn.cursor()
+except Exception as e:
+    print("Connectivity Error : ", e)
 
 
 class Insert:
