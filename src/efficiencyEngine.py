@@ -36,33 +36,56 @@ class efficient:
     
     def dynamic_program(self, strength, classes):
         used_room = set()
-        allocation = {}
+        index = 0
+
+        self.dp(index, used_room, strength, classes)
         
-        for index, eachcls in enumerate(classes):
-            eligible = {}
+        # allocation = {}
+        
+        # for cls_index, eachcls in enumerate(classes):
             
-            for eachroom, capacity in self.classrooms.items():
+            
+        #     eligible = {}
+            
+        #     for eachroom, capacity in self.classrooms.items():
                 
                 
-                if eachroom in used_room:
-                    continue
+        #         if eachroom in used_room:
+        #             continue
                 
                 
-                if strength[index] <= capacity:
-                    eligible[eachroom] = capacity - strength[index]
+        #         if strength[index] <= capacity:
+        #             eligible[eachroom] = capacity - strength[index]
 
             
-            if not eligible:
-                print(f"Cannot Schedule class {eachcls}")
-                continue
+        #     if not eligible:
+        #         print(f"Cannot Schedule class {eachcls}")
+        #         continue
             
-            best_room = min(eligible, key = eligible.get)
+        #     best_room = min(eligible, key = eligible.get)
                     
-            allocation[eachcls] = best_room
-            used_room.add(best_room)
+        #     allocation[eachcls] = best_room
+        #     used_room.add(best_room)
         
-        print(allocation)
+        # print(allocation)
+    
+    
+    def dp(self, index, used_room, strength, classes):
+        if index == len(strength):
+            return 0
         
+        best = 0
+        rooms = used_room
+        
+        for eachroom, capacity in self.classrooms.items():
+            
+            if eachroom not in used_room and capacity >= strength[index]:
+                waste = capacity - strength[index]
+                rooms.add(eachroom)
+                print("room", eachroom, "to", classes[index])
+                total = waste + self.dp(index+1, used_room, strength, classes)
+            
+        return total
         
             
             
