@@ -23,12 +23,13 @@ class graph_generator():
         graph (dict): Adjacency list representing conflicts
     """
     
-    def __init__(self, classes, timeslots, prof_availablity):
+    def __init__(self, classes, timeslots, prof_availablity, classrooms):
         """Initialize an empty graph."""
         self.classes = classes
         self.timeslots = timeslots
         self.prof_availablity = prof_availablity
         self.class_map = {cl['class_id'] : cl for cl in self.classes}
+        self.classrooms = classrooms
         self.unscheduled = []
         self.graph = {}
         self.result = []
@@ -107,6 +108,28 @@ class graph_generator():
             
         return False
     
+    #room feasiblity checker to make sure a lot of classes do not get assigned to same timeslot which creates artificial scedule (caught in dp)
+    def room_assignment(self, slot_classes):
+        room_caps = sorted(self.classrooms.values(), reverse=True)
+        class_size = []
+        
+        for clsid in slot_classes:
+            cls = self.class_map[clsid]
+            class_size.append(cls['total_students'])
+        
+        class_size.sort(reverse=True)
+
+        if len(class_size) > len(room_caps):
+            return False
+        
+        for i in range(len(class_size)):
+            if class_size[i] > room_caps[i]:
+                return False
+            
+        return True
+
+        
+        
     def coloring_graph(self):
         self.unscheduled = []
         """
@@ -147,10 +170,20 @@ class graph_generator():
                 timeslot = self.timeslots[timeslot_keys[color]]
                 # Assign smallest unused color
                 if color not in used_colors and self.is_prof_available(prof_id, timeslot):
-                    colored_graph[eachnode] = color
-                    break
-                else:
-                    color += 1
+                    
+                    slot_classes = []
+                    
+                    for cls_id, assigned_color in colored_graph.items():
+                        if assigned_color == color:
+                            slot_classes.append(cls_id)
+                    
+                    slot_classes.append(eachnode)       
+
+                    if self.room_assignment(slot_classes):
+                        colored_graph[eachnode] = color
+                        break
+                
+                color += 1
 
         return colored_graph, self.unscheduled
     
