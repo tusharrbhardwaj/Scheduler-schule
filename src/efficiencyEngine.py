@@ -4,9 +4,12 @@ class efficient:
         self.graph_schedule = graph_schedule
         self.classrooms = classrooms
         self.capacity = []
+        self.best_choices = {}
+        self.memo = {} #for memoization
         
     def optimized_room_allocation(self):
         timeslot_map = {}
+        all_allocations = {}
         for eachclass in self.graph_schedule:
             timeslot = eachclass[1]
             
@@ -27,66 +30,83 @@ class efficient:
                 strength.append(eachclass[1])
                 classes.append(eachclass[0])
                 
-            strength, classes = map(list, zip(*sorted(zip(classes, strength), key=lambda x: x[1], reverse=True)))
-            self.dynamic_program(strength, classes)
+            classes, strength = map(list, zip(*sorted(zip(classes, strength), key=lambda x: x[1], reverse=True)))
+            
+            allocation = self.dynamic_program(strength, classes)
+            all_allocations.update(allocation)            
 
         
             
-        return timeslot_map
+        return all_allocations
     
     def dynamic_program(self, strength, classes):
         used_room = set()
+        self.memo = {}
+        self.best_choices = {}
         index = 0
 
         self.dp(index, used_room, strength, classes)
         
-        # allocation = {}
-        
-        # for cls_index, eachcls in enumerate(classes):
-            
-            
-        #     eligible = {}
-            
-        #     for eachroom, capacity in self.classrooms.items():
-                
-                
-        #         if eachroom in used_room:
-        #             continue
-                
-                
-        #         if strength[index] <= capacity:
-        #             eligible[eachroom] = capacity - strength[index]
+        allocation = self.path(classes)
 
-            
-        #     if not eligible:
-        #         print(f"Cannot Schedule class {eachcls}")
-        #         continue
-            
-        #     best_room = min(eligible, key = eligible.get)
-                    
-        #     allocation[eachcls] = best_room
-        #     used_room.add(best_room)
+        print(allocation)
+        return allocation
         
-        # print(allocation)
-    
     
     def dp(self, index, used_room, strength, classes):
+        
+        state = (index, tuple(sorted(used_room))) #converted used_room set to tuple to make it hasable so that it can be used as keys in memo{}
+        best_room = None
+
+        if state in self.memo:
+            return self.memo[state]
+        
         if index == len(strength):
             return 0
         
-        best = 0
-        rooms = used_room
+        best = float('inf') #maximize waste by putting best as infinity
         
         for eachroom, capacity in self.classrooms.items():
             
             if eachroom not in used_room and capacity >= strength[index]:
                 waste = capacity - strength[index]
+                rooms = used_room.copy() #making copy of set to avoid uploading to the original set directly
                 rooms.add(eachroom)
-                print("room", eachroom, "to", classes[index])
-                total = waste + self.dp(index+1, used_room, strength, classes)
-            
-        return total
+                
+                total = waste + self.dp(index+1, rooms, strength, classes)
+
+                if total < best:
+                    best = total
+                    best_room = eachroom  
         
+        if best_room is not None:
+            self.best_choices[state] = best_room
+            self.memo[state] = best
+        
+        return best
+    
+    def path(self, classes):
+        used_room = set()
+        index = 0
+        best_room = None
+        allocation = {}
+        
+
+        while index < len(classes):
+            state = (index, tuple(sorted(used_room)))
+            
+            if state not in self.best_choices:
+                print(f"No feasible allocation for class {classes[index]}")
+                allocation[classes[index]] = None
+                break
+
+            best_room = self.best_choices[state]
+            allocation[classes[index]] = best_room
+            
+            used_room.add(best_room)
+            index += 1
+        
+        return allocation
             
             
                 
