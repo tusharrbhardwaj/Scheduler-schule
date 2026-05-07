@@ -79,7 +79,7 @@ def greedy_scheduling():
 def graph_engine():
         
         #schedule
-        graph = graphEngine.graph_generator(classes,timeslots,prof_availablity)
+        graph = graphEngine.graph_generator(classes,timeslots,prof_availablity, classrooms)
         
         graph.conflict_graph()
         colored, unscheduled = graph.coloring_graph()
