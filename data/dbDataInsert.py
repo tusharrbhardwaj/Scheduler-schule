@@ -108,7 +108,21 @@ class Update:
         except Exception as e:
             print("Graph Schedule could not be updated.\n", e)
         
+    def update_dp_result(self, allocation):
+        try:
+            table = 'dp_result'
 
+            cur.execute(f"TRUNCATE TABLE {table}")
+            
+            query = f"INSERT INTO {table} (class_id, room_no) values (%s, %s)"
+            data = [(class_id, room_no) for class_id, room_no in allocation.items()]
+            cur.executemany(query, data)
+            conn.commit()
+            print(f"Graph Scheduled Saved Successfully!\n{len(allocation)} rows inserted")
+            
+        except Exception as e:
+            print("Dp result could not be updated.\n", e)
+            
 
 if __name__ == "__main__":
     table_name = input("Enter the name of the table you want to enter data into : ")

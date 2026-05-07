@@ -131,3 +131,63 @@ class Fetch:
         except Exception as e:
             print("Data could not be fetched from graph_schedule \n", e)
             return None
+        
+    def dp_fetch(self):
+        
+        try:
+            
+            query = f'''
+            SELECT 
+            gs.class_id,
+
+            p.prof_name,
+            pr.programme_name,
+            c.module,
+            st.group_name,
+
+            t.day,
+            t.start_time,
+            t.end_time,
+
+            dp.room_no,
+            cr.cr_capacity,
+            
+            c.total_students,
+            (cr.cr_capacity - c.total_students) AS wasted_seats
+            
+            FROM graph_schedule gs
+
+            JOIN classes c 
+                ON gs.class_id = c.class_id
+
+            JOIN programmes pr
+                ON c.cid = pr.cid
+
+            JOIN student_groups st
+                ON gs.group_id = st.group_id
+    
+            JOIN professor p 
+                ON c.prof_id = p.prof_id
+
+            JOIN timeslots t 
+                ON gs.timeslot_id = t.timeslot_id
+                
+            LEFT JOIN dp_result dp
+                ON gs.class_id = dp.class_id
+
+            LEFT JOIN classrooms cr
+                ON dp.room_no = cr.room_no
+
+        ORDER BY 
+            t.day,
+            t.start_time;
+            '''
+            
+            cur.execute(query)
+            data = cur.fetchall()
+            print("Combined Graph + DP Schedule fetched from DB")
+            return data
+        
+        except Exception as e:
+            print("Data could not be fetched from dp and graph schedule \n", e)
+            return None

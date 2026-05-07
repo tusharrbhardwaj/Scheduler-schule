@@ -150,13 +150,30 @@ class Schedule:
         
         try:
             
-            raw_data = dbFetch.Fetch("greedy_schedule").graphschedule_fetch()
+            raw_data = dbFetch.Fetch("graph_schedule").graphschedule_fetch()
             data = [("Class_id", "Professor", "Programme-name", "Module", "Group", "Day", "From", "To")]
             for each in raw_data:
                 temp = []
                 temp.extend([each[0], each[1], each[2], each[3], each[4], each[5],each[6].strftime("%H:%M"), each[7].strftime("%H:%M")])
                 data.append(temp)
             print("Graph Schedule Tranformed.\n")
+            return data
+        
+        except Exception as e:
+            print("Graphically Scheduled data could not be transformed.\n", e)
+            return None
+    
+    def dp_schedule():
+        
+        try:
+            
+            raw_data = dbFetch.Fetch("dp_result").dp_fetch()
+            data = [("Class_id", "Professor", "Programme-name", "Module", "Group", "Day", "From", "To", "Room_no", "Room_capacity", "Total_Students", "Seats_Wasted")]
+            for each in raw_data:
+                temp = []
+                temp.extend([each[0], each[1], each[2], each[3], each[4], each[5],each[6].strftime("%H:%M"), each[7].strftime("%H:%M"), each[8], each[9], each[10], each[11]])
+                data.append(temp)
+            print("DP Schedule Tranformed.\n")
             return data
         
         except Exception as e:
