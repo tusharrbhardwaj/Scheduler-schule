@@ -25,6 +25,7 @@ from src import greedySolver
 from src import graphEngine
 from rich.console import Console
 from rich.table import Table
+from src import efficiencyEngine
 
 
 
@@ -33,8 +34,8 @@ transform = Transformation()
 classes = transform.readData("classes")
 timeslots = transform.transform_timeslot()
 classrooms = transform.transform_classrooms()
-class_groups = transform.transform_classgroups()
 prof_availablity = transform.transform_prof_availablity()
+
 #insert in db
 upload = dbDataInsert.Update()
 
@@ -78,12 +79,13 @@ def greedy_scheduling():
 def graph_engine():
         
         #schedule
-        graph = graphEngine.graph_generator(classes,class_groups,timeslots)
+        graph = graphEngine.graph_generator(classes,timeslots,prof_availablity)
         
-        graph.conflict_graph() 
-        graph.coloring_graph()
-        graph_schedule = graph.timeslot_mapping()
-        graph.validate_schedule()
+        graph.conflict_graph()
+        colored, unscheduled = graph.coloring_graph()
+
+        graph_schedule = graph.timeslot_mapping(colored)
+        graph.validate_schedule(colored)
         
         #upload
         upload.update_graphschedule(graph_schedule)
@@ -108,21 +110,45 @@ def graph_engine():
             file.write(console.export_text())
 
         print("Data saved to output/graph_output.txt")
+        
+        print(f"{len(unscheduled)} classes left unscheduled using greedySolver : \n", unscheduled)
+        
+        return graph_schedule
 
-# # Generate coloring result
-# deg = graphing.coloring_graph()
-# print("Colored Graph:", deg)
+    
+    
+def efficiency_engine(graph):
+    dp = efficiencyEngine.efficient(graph, classrooms)
+    allocation = dp.optimized_room_allocation()
 
-# print("\nTimeslot Mapping:\n")
-# graphing.timeslot_mapping()
+    upload.update_dp_result(allocation)
+    
+    data = Schedule.dp_schedule()
 
-# print("\nValidation:\n")
-# graphing.validate_schedule()
+    console = Console(record=True)
+    table = Table(title="Graph_allocation with DP", show_lines=True)
+
+    for col in data[0]:
+        table.add_column(col, justify="center")
+
+    for row in data[1:]:
+        table.add_row(*[str(x) for x in row])
+
+    console.print(table)
+
+    # Save output
+    with open('output/dp_output.txt', 'w') as file:
+        file.write(console.export_text())
+
+    print("Data saved to output/dp_output.txt")
+    
 
         
 if __name__ == "__main__":
         greedy_scheduling()
-        # graph_engine()
+        graph_schedule = graph_engine()
+        efficiency_engine(graph_schedule)
+        
         
         
 # add room constraint to graphEngine
