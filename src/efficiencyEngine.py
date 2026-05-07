@@ -56,7 +56,6 @@ class efficient:
     def dp(self, index, used_room, strength, classes):
         
         state = (index, tuple(sorted(used_room))) #converted used_room set to tuple to make it hasable so that it can be used as keys in memo{}
-        best_room = None
 
         if state in self.memo:
             return self.memo[state]
@@ -65,6 +64,7 @@ class efficient:
             return 0
         
         best = float('inf') #maximize waste by putting best as infinity
+        best_room = None
         
         for eachroom, capacity in self.classrooms.items():
             
@@ -73,8 +73,13 @@ class efficient:
                 rooms = used_room.copy() #making copy of set to avoid uploading to the original set directly
                 rooms.add(eachroom)
                 
-                total = waste + self.dp(index+1, rooms, strength, classes)
+                future = self.dp(index+1, rooms, strength, classes)
 
+                if future == float('inf'):
+                    continue
+
+                total = waste + future
+                
                 if total < best:
                     best = total
                     best_room = eachroom  
