@@ -1,10 +1,12 @@
 from data import connection
+from utils import success, error, info
+
 
 try:
     conn = connection()
     cur = conn.cursor()
 except Exception as e:
-    print("Connectivity Error : ", e)
+    error("Connectivity Error : ", e)
 
 class Fetch:
     def __init__(self, table_name):
@@ -21,11 +23,11 @@ class Fetch:
             columns = cur.fetchall()
             cur.execute(f"SELECT * FROM {self.table_name}")
             fetched_data = cur.fetchall()
-            print(f"Successfully fetched data from {self.table_name}")
+            success(f"Successfully fetched data from {self.table_name}")
             return columns, fetched_data
         
         except Exception as e:
-            print(f"Some Error Ocuured while fetching data from table {self.table_name} : {e}")
+            error(f"Some Error Ocuured while fetching data from table {self.table_name} : {e}")
             return None, None
     
     def greedyschedule_fetch(self):
@@ -77,11 +79,11 @@ class Fetch:
             
             cur.execute(query)
             data = cur.fetchall()
-            print("Greedy_Schedule fetched from DB")
+            success("Greedy_Schedule fetched from DB")
             return data
         
         except Exception as e:
-            print("Data could not be fetched from greedy_schedule \n", e)
+            error("Data could not be fetched from greedy_schedule \n", e)
             return None
         
     def graphschedule_fetch(self):
@@ -125,11 +127,11 @@ class Fetch:
             
             cur.execute(query)
             data = cur.fetchall()
-            print("Graph_Schedule fetched from DB")
+            success("Graph_Schedule fetched from DB")
             return data
         
         except Exception as e:
-            print("Data could not be fetched from graph_schedule \n", e)
+            error("Data could not be fetched from graph_schedule \n", e)
             return None
         
     def dp_fetch(self):
@@ -185,9 +187,9 @@ class Fetch:
             
             cur.execute(query)
             data = cur.fetchall()
-            print("Combined Graph + DP Schedule fetched from DB")
+            success("Combined Graph + DP Schedule fetched from DB")
             return data
         
         except Exception as e:
-            print("Data could not be fetched from dp and graph schedule \n", e)
+            error("Data could not be fetched from dp and graph schedule \n", e)
             return None

@@ -1,5 +1,6 @@
 from datetime import time
 from data import dbFetch
+from utils import success, error, info
 
 
 
@@ -30,11 +31,11 @@ class Transformation:
                     i += 1
                 transformed_data.append(temp)
             
-            print(f"Successfully transformed data from table {name}.\n")
+            success(f"Successfully transformed data from table {name}.\n")
             return transformed_data
         
         except Exception as e:
-            print("Error while Transforming data.\n", e)
+            error("Error while Transforming data.\n", e)
             return None
     
     def transform_timeslot(self):
@@ -51,12 +52,12 @@ class Transformation:
                 self.data[i] = temp
                 i+=1
             
-            print("Timeslots successfully transformed to usable data.\n")
+            success("Timeslots successfully transformed to usable data.\n")
             return self.data
         
         except Exception as e:
             
-            print("Timeslots cannot be transformed to usable data.\n", e)
+            error("Timeslots cannot be transformed to usable data.\n", e)
     
     def transform_classrooms(self):
         try:
@@ -65,11 +66,11 @@ class Transformation:
             for each in rawdata:
                 self.timeslots[each['room_no']] = each['cr_capacity']
             
-            print("Classroom data transformed successfully.\n")    
+            success("Classroom data transformed successfully.\n")    
             return self.timeslots
         
         except Exception as e:
-            print("Error occured while transforming classroom data.\n", e)
+            error("Error occured while transforming classroom data.\n", e)
 
     def transform_classgroups(self):
         try:
@@ -78,7 +79,6 @@ class Transformation:
             
             
             for eachrow in rawdata:
-                temp = {}
                 key = eachrow['group_id']
                 value = eachrow['class_id']
                 if key in self.class_groups:
@@ -86,11 +86,11 @@ class Transformation:
                 else:
                     self.class_groups[key] = [value]
             
-            print("Class_groups successfully transformed to usable data.\n")
+            success("Class_groups successfully transformed to usable data.\n")
             return self.class_groups 
             
         except Exception as e:
-            print("Error occured while transforming class and data.\n", e)
+            error("Error occured while transforming class and data.\n", e)
             
     def transform_prof_availablity(self):
         try:
@@ -111,11 +111,11 @@ class Transformation:
 
                 
             
-            print("Timeslots successfully transformed to usable data.\n")
+            success("Timeslots successfully transformed to usable data.\n")
             return self.prof_availablity
     
         except Exception as e:
-            print("Error occured while transforming class and data.\n", e)
+            error("Error occured while transforming class and data.\n", e)
             
             
             
@@ -139,11 +139,11 @@ class Schedule:
                 temp = []
                 temp.extend([each[0], each[1], each[2], each[3], each[4], each[5], each[6], each[7].strftime("%H:%M"), each[8].strftime("%H:%M"), each[9], each[10], each[11]])
                 data.append(temp)
-            print("Greedy Schedule Tranformed.\n")
+            success("\nGreedy Schedule Tranformed.\n")
             return data
         
         except Exception as e:
-            print("Greedily Scheduled data could not be transformed.\n", e)
+            error("Greedily Scheduled data could not be transformed.\n", e)
             return None
     
     def graph_schedule():
@@ -156,28 +156,27 @@ class Schedule:
                 temp = []
                 temp.extend([each[0], each[1], each[2], each[3], each[4], each[5],each[6].strftime("%H:%M"), each[7].strftime("%H:%M")])
                 data.append(temp)
-            print("Graph Schedule Tranformed.\n")
+            success("Graph Schedule Tranformed.\n")
             return data
         
         except Exception as e:
-            print("Graphically Scheduled data could not be transformed.\n", e)
+            error("Graphically Scheduled data could not be transformed.\n", e)
             return None
     
     def dp_schedule():
         
         try:
-            
             raw_data = dbFetch.Fetch("dp_result").dp_fetch()
             data = [("Class_id", "Professor", "Programme-name", "Module", "Group", "Day", "From", "To", "Room_no", "Room_capacity", "Total_Students", "Seats_Wasted")]
             for each in raw_data:
                 temp = []
                 temp.extend([each[0], each[1], each[2], each[3], each[4], each[5],each[6].strftime("%H:%M"), each[7].strftime("%H:%M"), each[8], each[9], each[10], each[11]])
                 data.append(temp)
-            print("DP Schedule Tranformed.\n")
+            success("DP Schedule Tranformed.")
             return data
         
         except Exception as e:
-            print("Graphically Scheduled data could not be transformed.\n", e)
+            error("Graphically Scheduled data could not be transformed.\n", e)
             return None
     
   

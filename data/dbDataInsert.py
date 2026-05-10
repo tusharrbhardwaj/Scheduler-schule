@@ -5,12 +5,13 @@ This file helps user to insert data into tables of the database connected.
 import csv
 import pyinputplus as pyip
 from data import connection
+from utils import success, error, info
 
 try:
     conn = connection()
     cur = conn.cursor()
 except Exception as e:
-    print("Connectivity Error : ", e)
+    error("Connectivity Error : ", e)
 
 
 class Insert:
@@ -27,10 +28,10 @@ class Insert:
             with open(f"dataInput/{self.table_name}.csv") as csvfile:
                 data = csv.reader(csvfile)
                 self.csv_data = [row for row in data if row] #if row condition removes blank row from csv to avoid conflict with db
-            print("Fetched data from csv file to upload to DB")
+            success("Fetched data from csv file to upload to DB")
         
         except Exception as e:
-            print("Could not read data from file \n", e)
+            error("Could not read data from file \n", e)
                 
             
     def upload_data(self):
@@ -50,7 +51,7 @@ class Insert:
             
             
             if csv_headers == db_headers:
-                print("Data validation Successfull")
+                success("Data validation Successfull")
                 
                 placeholders = ', '.join(['%s'] * len(self.table_headers))
                 column_str = ', '.join(self.table_headers)
@@ -61,20 +62,20 @@ class Insert:
                 if confirmation == 'yes':
                     cur.executemany(query, self.csv_data[1:])
                     conn.commit()
-                    print("Data Insterted Successfully")
-                    print(f"{len(self.csv_data[1:])} rows processed")
+                    success("Data Insterted Successfully")
+                    info(f"{len(self.csv_data[1:])} rows processed")
                     
                 else:
                     conn.rollback()
-                    print("Data Insertion Aborted")
+                    error("Data Insertion Aborted")
                  
             else:
-                print("Data validation Unsuccessfull")
-                print("CSV:", csv_headers)
-                print("DB :", db_headers)
+                error("Data validation Unsuccessfull")
+                info("CSV:", csv_headers)
+                info("DB :", db_headers)
         
         except Exception as e:
-            print("Some error occured while uploading data to DB \n", e)   
+            error("Some error occured while uploading data to DB \n", e)   
         
 class Update:
     def __init__(self):
@@ -89,10 +90,11 @@ class Update:
             query = f"INSERT INTO {table} (class_id, cid, module, group_id, timeslot_id, room_no, prof_id) values (%s, %s, %s, %s, %s, %s, %s)"
             cur.executemany(query, scheduled)
             conn.commit()
-            print(f"Greedy Scheduled Saved Successfully!\n{len(scheduled)} rows inserted")
+            success(f"Greedy Scheduled Saved Successfully!\n")
+            info(f"{len(scheduled)} rows inserted")
             
         except Exception as e:
-            print("Greedy Schedule could not be updated.\n", e)
+            error("Greedy Schedule could not be updated.\n", e)
             
     def update_graphschedule(self, graph_schedule):
         try:
@@ -103,10 +105,11 @@ class Update:
             query = f"INSERT INTO {table} (class_id, timeslot_id, prof_id, cid, group_id, total_students) values (%s, %s, %s, %s, %s, %s)"
             cur.executemany(query, graph_schedule)
             conn.commit()
-            print(f"Graph Scheduled Saved Successfully!\n{len(graph_schedule)} rows inserted")
+            success(f"Graph Scheduled Saved Successfully!\n")
+            info(f"{len(graph_schedule)} rows inserted")
             
         except Exception as e:
-            print("Graph Schedule could not be updated.\n", e)
+            error("Graph Schedule could not be updated.\n", e)
         
     def update_dp_result(self, allocation):
         try:
@@ -118,10 +121,11 @@ class Update:
             data = [(class_id, room_no) for class_id, room_no in allocation.items()]
             cur.executemany(query, data)
             conn.commit()
-            print(f"Graph Scheduled Saved Successfully!\n{len(allocation)} rows inserted")
+            success(f"DP with graph Scheduled Saved Successfully!\n")
+            info(f"{len(allocation)} rows inserted")
             
         except Exception as e:
-            print("Dp result could not be updated.\n", e)
+            error("Dp result could not be updated.\n", e)
             
 
 if __name__ == "__main__":

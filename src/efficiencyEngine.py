@@ -49,7 +49,7 @@ class efficient:
         
         allocation = self.path(classes)
 
-        print(allocation)
+        # print(allocation)
         return allocation
         
     

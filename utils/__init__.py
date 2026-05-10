@@ -1,0 +1,1 @@
+from .outputformat import success, error, info, heading, warning

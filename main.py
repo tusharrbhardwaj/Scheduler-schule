@@ -26,6 +26,7 @@ from src import graphEngine
 from rich.console import Console
 from rich.table import Table
 from src import efficiencyEngine
+from utils import error,success,info,warning,heading
 
 
 
@@ -68,12 +69,14 @@ def greedy_scheduling():
         with open('output/greedy_output.txt', 'w') as file:
             file.write(console.export_text())
 
-        print("Data saved to output/greedy_output.txt")
+        heading("Data saved to output/greedy_output.txt")
         
-        print(f"{len(unscheduled)} classes left unscheduled using greedySolver : \n", unscheduled)
+        warning(f"{len(unscheduled)} classes left unscheduled using greedySolver : ")
+        warning(unscheduled)
+        
 
     except Exception as e:
-        print("Scheduling pipeline failed:\n", e)
+        error("Scheduling pipeline failed:\n", e)
         
 
 def graph_engine():
@@ -103,15 +106,16 @@ def graph_engine():
         for row in data[1:]:
             table.add_row(*[str(x) for x in row])
 
-        console.print(table)
+        # console.print(table)
 
         # Save output
         with open('output/graph_output.txt', 'w') as file:
             file.write(console.export_text())
 
-        print("Data saved to output/graph_output.txt")
+        heading("Data saved to output/graph_output.txt")
         
-        print(f"{len(unscheduled)} classes left unscheduled using greedySolver : \n", unscheduled)
+        warning(f"{len(unscheduled)} classes left unscheduled using greedySolver : ")
+        warning(unscheduled)
         
         return graph_schedule
 
@@ -140,7 +144,7 @@ def efficiency_engine(graph):
     with open('output/dp_output.txt', 'w') as file:
         file.write(console.export_text())
 
-    print("Data saved to output/dp_output.txt")
+    heading("Data saved to output/dp_output.txt")
     
 
         
@@ -148,9 +152,3 @@ if __name__ == "__main__":
         greedy_scheduling()
         graph_schedule = graph_engine()
         efficiency_engine(graph_schedule)
-        
-        
-        
-# add room constraint to graphEngine
-
-# add prof pref to greedy 
