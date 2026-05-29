@@ -59,3 +59,6 @@ Database integration (MongoDB / MySQL)
 Teacher & room allocation optimization
 AI-based smart scheduling
 Export schedules to PDF/Excel
+
+
+Data Segration by @Digvijay-star
