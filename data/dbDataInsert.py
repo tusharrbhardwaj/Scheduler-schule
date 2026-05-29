@@ -11,7 +11,8 @@ try:
     conn = connection()
     cur = conn.cursor()
 except Exception as e:
-    error("Connectivity Error : ", e)
+    error("Connectivity Error : ")
+    info(e)
 
 
 class Insert:
@@ -31,7 +32,8 @@ class Insert:
             success("Fetched data from csv file to upload to DB")
         
         except Exception as e:
-            error("Could not read data from file \n", e)
+            error("Could not read data from file ")
+            info(e)
                 
             
     def upload_data(self):
@@ -75,7 +77,8 @@ class Insert:
                 info("DB :", db_headers)
         
         except Exception as e:
-            error("Some error occured while uploading data to DB \n", e)   
+            error("Some error occured while uploading data to DB ") 
+            info(e)  
         
 class Update:
     def __init__(self):
@@ -94,7 +97,8 @@ class Update:
             info(f"{len(scheduled)} rows inserted")
             
         except Exception as e:
-            error("Greedy Schedule could not be updated.\n", e)
+            error("Greedy Schedule could not be updated.")
+            info(e)
             
     def update_graphschedule(self, graph_schedule):
         try:
@@ -109,7 +113,8 @@ class Update:
             info(f"{len(graph_schedule)} rows inserted")
             
         except Exception as e:
-            error("Graph Schedule could not be updated.\n", e)
+            error("Graph Schedule could not be updated.")
+            info(e)
         
     def update_dp_result(self, allocation):
         try:
@@ -125,7 +130,8 @@ class Update:
             info(f"{len(allocation)} rows inserted")
             
         except Exception as e:
-            error("Dp result could not be updated.\n", e)
+            error("Dp result could not be updated.")
+            info(e)
             
 
 if __name__ == "__main__":

@@ -15,7 +15,8 @@ def connection():
         return conn
     
     except Exception as e:
-        error("Error Connecting to DB \n", e)
+        error("Error Connecting to DB")
+        info(e)
         return None
         
 

@@ -6,7 +6,8 @@ try:
     conn = connection()
     cur = conn.cursor()
 except Exception as e:
-    error("Connectivity Error : ", e)
+    error("Connectivity Error : ")
+    info(e)
 
 class Fetch:
     def __init__(self, table_name):
@@ -83,7 +84,8 @@ class Fetch:
             return data
         
         except Exception as e:
-            error("Data could not be fetched from greedy_schedule \n", e)
+            error("Data could not be fetched from greedy_schedule")
+            info(e)
             return None
         
     def graphschedule_fetch(self):
@@ -131,7 +133,8 @@ class Fetch:
             return data
         
         except Exception as e:
-            error("Data could not be fetched from graph_schedule \n", e)
+            error("Data could not be fetched from graph_schedule")
+            info(e)
             return None
         
     def dp_fetch(self):
@@ -191,5 +194,6 @@ class Fetch:
             return data
         
         except Exception as e:
-            error("Data could not be fetched from dp and graph schedule \n", e)
+            error("Data could not be fetched from dp and graph schedule")
+            info(e)
             return None

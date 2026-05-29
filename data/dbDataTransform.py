@@ -35,7 +35,8 @@ class Transformation:
             return transformed_data
         
         except Exception as e:
-            error("Error while Transforming data.\n", e)
+            error("Error while Transforming data.")
+            info(e)
             return None
     
     def transform_timeslot(self):
@@ -57,7 +58,8 @@ class Transformation:
         
         except Exception as e:
             
-            error("Timeslots cannot be transformed to usable data.\n", e)
+            error("Timeslots cannot be transformed to usable data.")
+            info(e)
     
     def transform_classrooms(self):
         try:
@@ -70,7 +72,8 @@ class Transformation:
             return self.timeslots
         
         except Exception as e:
-            error("Error occured while transforming classroom data.\n", e)
+            error("Error occured while transforming classroom data.")
+            info(e)
 
     def transform_classgroups(self):
         try:
@@ -90,7 +93,8 @@ class Transformation:
             return self.class_groups 
             
         except Exception as e:
-            error("Error occured while transforming class and data.\n", e)
+            error("Error occured while transforming class and data.")
+            info(e)
             
     def transform_prof_availablity(self):
         try:
@@ -115,7 +119,8 @@ class Transformation:
             return self.prof_availablity
     
         except Exception as e:
-            error("Error occured while transforming class and data.\n", e)
+            error("Error occured while transforming class and data.")
+            info(e)
             
             
             
